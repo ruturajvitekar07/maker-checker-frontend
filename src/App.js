@@ -1,24 +1,39 @@
-import logo from './logo.svg';
 import './App.css';
+import Home from './Home/Home';
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import React from 'react'
+import LogIn from './LogIn/Login';
+import Admin from './Admin/Admin';
+import ViewUser from './Admin/ViewUser';
+import AddStage from './Admin/AddStage';
+import ViewStage from './Admin/ViewStage';
+import User from './User/User'
+import Approver from './User/Approver';
+import Signup from './Admin/Signup';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <div className="container">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<LogIn/>} />
+            <Route path="/admin" element={<Admin/>} />
+            <Route path="/adduser" element={<Signup/>} />
+            <Route path="/userlist" element={<ViewUser/>} />
+            <Route path="/addstage" element={<AddStage/>} />
+            <Route path="/stagelist" element={<ViewStage/>} />
+            <Route path="/user" element={<User/>}></Route>
+            <Route path='/approver' element={<Approver/>}></Route>
+          </Routes>
+        </BrowserRouter>  
+        <ToastContainer/>    
+      </div>
+    </React.Fragment>
   );
 }
 

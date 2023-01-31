@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
+import axios from 'axios';
 
 
 export default function User() {
@@ -10,6 +11,8 @@ export default function User() {
     const navigate = useNavigate()
     const [fileData, setFileData] = useState([])
     const username = sessionStorage.getItem('username');
+    const [file, setFile] = useState(null);
+ 
 
     const getPendigFileList = () => {
         const localStorageToken = sessionStorage.getItem("access_token");
@@ -17,9 +20,38 @@ export default function User() {
         AppService.getFileList("1", header)
         .then((response) => {
             console.log(response.data);
-            setFileData(response.data);
+            // setFileData(response.data);
         })
     }
+
+    const handleFileInput = (event) => {
+        setFile(event.target.files[0]);
+      };
+
+
+
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append('file', file);
+        const token = sessionStorage.getItem('access_token');
+        console.log(token)
+        formData.append('token', token);
+    
+        try {
+          const response = await axios.post("http://localhost:8080/file/upload", formData ,
+          {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+          console.log(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+
 
     const onLogout = () => {
         sessionStorage.removeItem('access_token')
@@ -51,8 +83,8 @@ export default function User() {
                 <div className='col-4'>
                     <div className="mb-3">
                         <label htmlFor="formFile" className="form-label">Upload File</label>
-                        <input className="form-control" type="file" id="formFile"/>
-                        <button className='btn btn-success mt-2'>Upload</button>
+                        <input className="form-control" type="file"   onChange={handleFileInput}  id="formFile"/>
+                        <button className='btn btn-success mt-2' onClick={handleSubmit}>Upload</button>
                     </div>
                 </div>
             </div>

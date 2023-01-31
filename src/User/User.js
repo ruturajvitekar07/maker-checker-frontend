@@ -14,7 +14,7 @@ export default function User() {
     const getPendigFileList = () => {
         const localStorageToken = sessionStorage.getItem("access_token");
         const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-        AppService.getFileList("upload", header)
+        AppService.getFileList("1", header)
         .then((response) => {
             console.log(response.data);
             setFileData(response.data);
@@ -43,16 +43,6 @@ export default function User() {
                     </Link>
                     &nbsp;
                     &nbsp;
-                    <Link to="/addstage">
-                        <a className="btn btn-primary">History</a>
-                    </Link>
-                    &nbsp;
-                    &nbsp;
-                    <button className="btn btn-primary" onClick={onLogout}>
-                        Logout
-                    </button>
-                    &nbsp;
-                    &nbsp;
                 </div>
                 <div className='my-lg-2'>
                     <button className='btn btn-primary' onClick={onLogout}>Logout</button>
@@ -71,7 +61,7 @@ export default function User() {
                     <thead style={{ textAlign: 'center' }}>
                         <tr>
                             <th className="table-primary">File Name</th>
-                            <th className="table-primary">History</th>
+                            {/* <th className="table-primary">History</th> */}
                         </tr>
                     </thead>
                     <tbody style={{ textAlign: 'center' }}>

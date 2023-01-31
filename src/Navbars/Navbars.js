@@ -19,7 +19,6 @@ export default function Navbars() {
             <Nav.Link href="/login">Login</Nav.Link>
             &nbsp;
             &nbsp;
-            <Nav.Link href="/adduser">Sign Up</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

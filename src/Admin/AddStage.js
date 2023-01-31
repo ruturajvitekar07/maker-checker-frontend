@@ -11,7 +11,7 @@ export default function AddStage () {
     const [nextStage, setNextStage] = useState('')
     const [dirName, setDirName] = useState('')
     const navigate = useNavigate()
-    const localStorageToken = localStorage.getItem("access_token");
+    const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: {"Authorization" : `Bearer ${localStorageToken}`} };
 
     const addStage = (event) => {

@@ -1,53 +1,41 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import axios from "axios";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
+import { Link } from 'react-router-dom'
 
-export default function Signup() {
+export default function UserInfo() {
 
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
-    const [password, setPassword] = useState('')
-    const navigate = useNavigate()
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-
-    const createUser = (event) => {
-        event.preventDefault();
-        const user = { firstName, lastName, email, role, password };
-        if (user.firstName.length === 0 || user.lastName.length === 0 || user.email.length === 0 || user.role.length === 0 || user.password.length === 0) {
-            toast.error("Enter information correctly")
-        } else {
-            axios.post("http://localhost:8080/admin/signup", user, header).then((response) => {
-                console.log(response.data);
-                if (response.status === 201) {
-                    console.log(response.data);
-                    toast.success('Signup successfull')
-                    navigate('/adduser')
-                } else {
-                    toast.error("Signup failed")
-                }
-            })
-        }
-    }
 
     useEffect(() => {
-        setFirstName("")
-        setLastName("")
-        setEmail("")
-        setRole("")
-        setPassword("")
+        const localStorageToken = sessionStorage.getItem("access_token");
+        const username = sessionStorage.getItem("username");
+        const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+        AppService.getUserInfo(username, header)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log(response.data);
+                    setFirstName(response.data.firstName)
+                    setLastName(response.data.lastName)
+                    setEmail(response.data.email)
+                    setRole(response.data.role)
+                } else {
+                    toast.error("Data not stored");
+                }
+            })
     }, [])
+
 
     return (
         <div className="container">
             <div className="row">
-                <h2 style={{ textAlign: 'center' }} className="mt-5">Register</h2>
-                <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
+                <h2 style={{ textAlign: 'center' }} className="mt-5">Profile</h2>
+                <div className="card col-md-6 offset-md-3 offset-md-3 mt-3">
                     <div className="card-body">
                         <form>
                             <div className="form-group mb-2">
@@ -91,19 +79,6 @@ export default function Signup() {
                                 >
                                 </input>
                             </div>
-                            <div className="form-group mb-2">
-                                <label className="form-label"> Password : </label>
-                                <input
-                                    type="password"
-                                    required
-                                    placeholder="Enter password"
-                                    name="password"
-                                    className="form-control"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                >
-                                </input>
-                            </div>
 
                             <div className="form-group mb-2">
                                 <label className="form-label"> Role : </label>
@@ -119,9 +94,9 @@ export default function Signup() {
                                 </input>
                             </div>
                             <div className="mt-3">
-                                <button className="btn btn-success" onClick={(e) => createUser(e)} >Sign Up</button>
-                                &nbsp;&nbsp;
-                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                                <Link to="/user">
+                                    <a className="btn btn-danger">Back</a>
+                                </Link>
                             </div>
                         </form>
                     </div>

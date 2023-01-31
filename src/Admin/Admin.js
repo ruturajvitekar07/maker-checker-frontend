@@ -4,7 +4,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
 
-
 export default function Admin() {
 
   const [users, setUsers] = useState([])
@@ -12,31 +11,15 @@ export default function Admin() {
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
-  // const getUserPendingList = () => {
-  //   AppService.getUserPendingList(header)
-  //     .then((response) => {
-  //       console.log(response.data)
-  //       if (response.data != null) {
-  //         setUsers(response.data)
-  //       } else {
-  //         toast.error("failed")
-  //       }
-  //     })
-  // }
-
-  const approveFile = (username) => {
-    AppService.approveDeclineAccount(username, "approved", header)
+  const getUserList = () => {
+    AppService.getUserList(header)
       .then((response) => {
-        console.log(response.data);
-        toast.success("Approved")
-      })
-  }
-
-  const declineFile = (username) => {
-    AppService.approveDeclineAccount(username, "declined", header)
-      .then((response) => {
-        console.log(response.data);
-        toast.success("Declined")
+        console.log(response.data)
+        if (response.data != null) {
+          setUsers(response.data)
+        } else {
+          toast.error("failed")
+        }
       })
   }
 
@@ -45,6 +28,16 @@ export default function Admin() {
       .then((response) => {
         console.log(response.data);
         toast.success("File deleted")
+      })
+  }
+
+  const deleteUser = (username) => {
+    console.log(username);
+    AppService.deleteUserAccount(username,header)
+      .then((response) => {
+        console.log(response.data);
+        toast.success("Account deleted")
+        navigate('/admin')
       })
   }
 
@@ -57,7 +50,7 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    getUserPendingList()
+    getUserList()
   }, [])
 
   return (
@@ -66,7 +59,7 @@ export default function Admin() {
         <div className='mt-5'>
           <h2 className="title mt-5" style={{ textAlign: 'center' }}>Admin Console</h2>
           <div className='mt-4'>
-            <Link to="/userlist">
+            {/* <Link to="/userlist">
               <a className="btn btn-primary">View Users</a>
             </Link>
             &nbsp;
@@ -75,18 +68,18 @@ export default function Admin() {
               <a className="btn btn-primary">Create Stage</a>
             </Link>
             &nbsp;
-            &nbsp;
+            &nbsp; */}
             <Link to="/stagelist">
               <a className="btn btn-primary">View Stages</a>
             </Link>
             &nbsp;
             &nbsp;
-            <Link to="/signup">
+            <Link to="/adduser">
               <a className="btn btn-primary">Add User</a>
             </Link>
             &nbsp;
             &nbsp;
-            <button className='btn btn-primary' onClick={deleteFile}>Delete Stagefile</button>
+            {/* <button className='btn btn-primary' onClick={deleteFile}>Delete Stagefile</button> */}
             <div className='my-lg-2'>
               <button className='btn btn-primary' onClick={onLogout}>Logout</button>
             </div>
@@ -110,9 +103,7 @@ export default function Admin() {
                     <td>{user.email}</td>
                     <td>{user.role}</td>
                     <td>
-                      <button className='btn btn-success' onClick={(e) => approveFile(user.email)}>Approve</button>
-                      &nbsp;&nbsp;
-                      <button className='btn btn-danger' onClick={(e) => declineFile(user.email)}>Decline</button>
+                      <button className='btn btn-danger col-7' onClick={(e) => deleteUser(user.email)}>Delete</button>
                     </td>
                   </tr>
                 )

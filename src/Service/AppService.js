@@ -14,7 +14,7 @@ class AppService {
     }
 
     getFileList(stageNo, header) {
-        // http://localhost:8080/file/list/dirname
+        // http://localhost:8080/file/list/stageNo
         return axios.get(BASE_REST_API_URL + '/file/list/' + stageNo, header)
     }
 
@@ -34,13 +34,13 @@ class AppService {
     }
 
     creteUser(user, header) {
-        // http://localhost:8080/account/signup
-        return axios.post(BASE_REST_API_URL + '/account/signup', user, header)
+        // http://localhost:8080/admin/signup
+        return axios.post(BASE_REST_API_URL + '/admin/signup', user, header)
     }
 
     deleteUserAccount(username, header) {
         // http://localhost:8080/admin/delete-account/nilesh@gmail.com
-        return axios.post(BASE_REST_API_URL + '/admin/delete-account/', username, header)
+        return axios.delete(BASE_REST_API_URL + '/admin/delete-account/' + username, header)
     }
 
     getStageList(header) {
@@ -50,7 +50,7 @@ class AppService {
 
     deleteStageFile(header) {
         // http://localhost:8080/admin/delete-stage-data
-        return axios.get(BASE_REST_API_URL + '/admin/delete-stage-data', header)
+        return axios.delete(BASE_REST_API_URL + '/admin/delete-stage-data', header)
     }
 
     createStage(stage, header) {

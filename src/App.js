@@ -12,6 +12,7 @@ import ViewStage from './Admin/ViewStage';
 import User from './User/User'
 import Approver from './User/Approver';
 import Signup from './Admin/Signup';
+import UserInfo from './User/UserInfo';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/stagelist" element={<ViewStage/>} />
             <Route path="/user" element={<User/>}></Route>
             <Route path='/approver' element={<Approver/>}></Route>
+            <Route path='/profile' element={<UserInfo/>}></Route>
           </Routes>
         </BrowserRouter>  
         <ToastContainer/>    

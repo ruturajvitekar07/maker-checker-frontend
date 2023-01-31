@@ -21,22 +21,21 @@ export default function Approver() {
                     console.log(response.data);
                     setUser(response.data)
                     if (response.data.role == "associate") {
-                        pendingFiles("upload")
+                        pendingFiles("1")
                         console.log("Folder : " + folder);
                     }
                     else if (response.data.role == "team lead") {
-                        pendingFiles("reviewed")
+                        pendingFiles("2")
                         console.log("Folder : " + folder);
                     }
                     else if (response.data.role == "manager") {
-                        pendingFiles("merge")
+                        pendingFiles("3")
                         console.log("Folder : " + folder);
                     }
                     else if (response.data.role == "gmanager") {
-                        pendingFiles("approved")
+                        pendingFiles("4")
                         console.log("Folder : " + folder);
                     }
-                    console.log("Data stored into user");
                 } else {
                     console.error("Data not stored");
                 }
@@ -47,7 +46,6 @@ export default function Approver() {
     const pendingFiles = (folder) => {
         AppService.getFileList(folder, header)
             .then((response) => {
-                console.log("my data");
                 console.log(response.data);
                 setFileData(response.data);
             })
@@ -102,9 +100,9 @@ export default function Approver() {
                                     <tr>
                                         <td>{file}</td>
                                         <td>
-                                            <button className='btn btn-success' onClick={approveFile(user.email)}>Approve</button>
+                                            <button className='btn btn-success' onClick={() => approveFile(user.email)}>Approve</button>
                                             &nbsp;&nbsp;
-                                            <button className='btn btn-danger' onClick={declineFile(user.email)}>Decline</button>
+                                            <button className='btn btn-danger' onClick={() => declineFile(user.email)}>Decline</button>
                                         </td>
                                     </tr>
                                 )

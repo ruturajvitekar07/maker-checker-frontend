@@ -13,6 +13,7 @@ import User from './User/User'
 import Approver from './User/Approver';
 import Signup from './Admin/Signup';
 import UserInfo from './User/UserInfo';
+import History from './Admin/History';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/user" element={<User/>}></Route>
             <Route path='/approver' element={<Approver/>}></Route>
             <Route path='/profile' element={<UserInfo/>}></Route>
+            <Route path='/history' element={<History/>}></Route>
           </Routes>
         </BrowserRouter>  
         <ToastContainer/>    

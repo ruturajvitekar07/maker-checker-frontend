@@ -1,25 +1,51 @@
-import {ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
+import axios from "axios";
 
 
 export default function User() {
 
     const navigate = useNavigate()
     const [fileData, setFileData] = useState([])
-    const username = sessionStorage.getItem('username');
+    const [file, setFile] = useState(null);
+    const localStorageToken = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
     const getPendigFileList = () => {
-        const localStorageToken = sessionStorage.getItem("access_token");
-        const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
         AppService.getFileList("1", header)
-        .then((response) => {
-            console.log(response.data);
-            setFileData(response.data);
-        })
+            .then((response) => {
+                console.log(response.data);
+                setFileData(response.data);
+            })
     }
+
+    const handleFileInput = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append('file', file);
+        console.log(localStorageToken)
+        formData.append('localStorageToken', localStorageToken);
+        try {
+            const response = await axios.post("http://localhost:8080/file/upload", formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorageToken}`
+                    }
+                });
+            console.log(response.data);
+            toast.success("File uploaded successfully", {autoClose:1000})
+            getPendigFileList();
+        } catch (error) {
+            toast.error(error);
+        }
+    };
 
     const onLogout = () => {
         sessionStorage.removeItem('access_token')
@@ -47,33 +73,29 @@ export default function User() {
                 <div className='my-lg-2'>
                     <button className='btn btn-primary' onClick={onLogout}>Logout</button>
                 </div>
-                <hr/>
+                <hr />
                 <div className='col-4'>
                     <div className="mb-3">
                         <label htmlFor="formFile" className="form-label">Upload File</label>
-                        <input className="form-control" type="file" id="formFile"/>
-                        <button className='btn btn-success mt-2'>Upload</button>
+                        <input className="form-control" type="file" onChange={handleFileInput} id="formFile" />
+                        <button className='btn btn-success mt-2' onClick={handleSubmit}>Upload</button>
                     </div>
                 </div>
             </div>
             <div className='mt-4'>
                 <table className="table table-striped">
-                    <thead style={{ textAlign: 'center' }}>
+                    <thead>
                         <tr>
                             <th className="table-primary">File Name</th>
-                            {/* <th className="table-primary">History</th> */}
+                            <th className="table-primary">Upload Date-Time</th>
                         </tr>
                     </thead>
-                    <tbody style={{ textAlign: 'center' }}>
+                    <tbody>
                         {
                             fileData.map((file) =>
                                 <tr>
-                                    <td>{file}</td>
-                                    {/* <td>
-                                    <button className='btn btn-success' onClick={approveFile(user.email)}>Approve</button>
-                                    &nbsp;&nbsp;
-                                    <button className='btn btn-danger' onClick={declineFile(user.email)}>Decline</button>
-                                </td> */}
+                                    <td>{file.fileName}</td>
+                                    <td>{file.timeStamp}</td>
                                 </tr>
                             )
                         }

@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
+import Swal from 'sweetalert2';
 
 export default function Admin() {
 
@@ -18,7 +19,7 @@ export default function Admin() {
         if (response.data != null) {
           setUsers(response.data)
         } else {
-          toast.error("failed")
+          toast.error("failed", {autoClose:1000})
         }
       })
   }
@@ -27,17 +28,35 @@ export default function Admin() {
     AppService.deleteStageFile(header)
       .then((response) => {
         console.log(response.data);
-        toast.success("File deleted")
+        toast.success("File deleted", {autoClose:1000})
       })
   }
 
   const deleteUser = (username) => {
     console.log(username);
-    AppService.deleteUserAccount(username,header)
-      .then((response) => {
-        console.log(response.data);
-        toast.success("Account deleted")
-        navigate('/admin')
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    }).
+      then((response) => {
+        if (response.value) {
+          AppService.deleteUserAccount(username,header);
+          getUserList();
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: `${username}'s data has been deleted.`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          getUserList();
+        }
+      }).catch((error) => {
+        console.log(error)
       })
   }
 
@@ -63,12 +82,12 @@ export default function Admin() {
               <a className="btn btn-primary">View Users</a>
             </Link>
             &nbsp;
-            &nbsp;
-            <Link to="/addstage">
-              <a className="btn btn-primary">Create Stage</a>
+            &nbsp; */}
+            <Link to="/history">
+              <a className="btn btn-primary">History</a>
             </Link>
             &nbsp;
-            &nbsp; */}
+            &nbsp;
             <Link to="/stagelist">
               <a className="btn btn-primary">View Stages</a>
             </Link>

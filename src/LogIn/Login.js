@@ -58,17 +58,21 @@ export default function Login() {
         }
     }
 
+    const goHome = () => {
+        navigate('/')
+    }
+
     return (
-        <div className="container-fluid pt-5 pl-5">
-            <div className="row g-0 col-8 offset-2 mt-8" style={{ padding: 0, margin: 0, boxSizing: "border-box"}}>
-                <div className="col-lg-5">
-                    <img src={require('../Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} />
+        <div className="container-fluid col-8 offset-2 mt-5">
+            <div className="row g-0 col-12" style={{ padding: 0, margin: 0, boxSizing: "border-box"}}>
+                <div className="col-5">
+                    <img src={require('../Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} onClick={goHome}/>
                 </div>
-                <div className="col-lg-7 py-5">
+                <div className="col-7 py-5">
                     <h2 className="ml-4" style={{ textAlign: "center", fontSize: '4rem', fontWeight: 700 }}>Login</h2>
                     {/* <form> */}
                     <div className="form-row py-3 pt-5">
-                        <div className="offset-2 col-lg-7">
+                        <div className="offset-1 col-lg-10">
                             <input
                                 type="text"
                                 placeholder="Enter username"
@@ -81,7 +85,7 @@ export default function Login() {
 
                     </div>
                     <div className="form-row">
-                        <div className="offset-2 py-3 col-lg-7">
+                        <div className="offset-1 py-3 col-lg-10">
                             <input
                                 type="password"
                                 placeholder="Enter password"
@@ -97,7 +101,7 @@ export default function Login() {
                         <div className="offset-1 col-lg-10">
                             <div>
                                 {/* <p>Don't have an account? Register <Link to={"/adduser"}>here</Link></p> */}
-                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; <button onClick={(e) => onLogin(e)} className="btn btn-success col-3" style={{ alignContent: "center" }}>Login</button>
+                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <button onClick={(e) => onLogin(e)} className="btn btn-success col-4" style={{ alignContent: "center" }}>Login</button>
                             </div>
                         </div>
                     </div>

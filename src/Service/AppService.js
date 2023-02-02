@@ -13,14 +13,19 @@ class AppService {
         return axios.post(BASE_REST_API_URL + '/file/upload', file)
     }
 
-    downloadFile(fileObject, header) {
+    downloadFile(fileObject, header, responseType) {
         // http://localhost:8080/file/download-file
-        return axios.post(BASE_REST_API_URL + '/file/download-file', fileObject, header)
+        return axios.post(BASE_REST_API_URL + '/file/download-file', fileObject, header, responseType)
     }
 
     getFileList(stageNo, header) {
         // http://localhost:8080/file/list/stageNo
         return axios.get(BASE_REST_API_URL + '/file/list/' + stageNo, header)
+    }
+
+    getFileList(header) {
+        // http://localhost:8080/admin/get-all-filelist
+        return axios.get(BASE_REST_API_URL + '/file/get-all-filelist', header)
     }
 
     getUserInfo(username, header) {
@@ -49,6 +54,11 @@ class AppService {
     getHistory(header){
         // http://localhost:8080/admin/get-all-filelist
         return axios.get(BASE_REST_API_URL+'/admin/get-all-filelist', header)
+    }
+
+    getAllHistory(header){
+        // http://localhost:8080/admin/get-eachfile-history
+        return axios.get(BASE_REST_API_URL+'/admin/get-eachfile-history', header)
     }
 
     deleteUserAccount(username, header) {

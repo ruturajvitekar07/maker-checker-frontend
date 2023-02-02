@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import React from 'react'
 import LogIn from './LogIn/Login';
 import Admin from './Admin/Admin';
-import ViewUser from './Admin/ViewUser';
 import AddStage from './Admin/AddStage';
 import ViewStage from './Admin/ViewStage';
 import User from './User/User'
@@ -26,13 +25,12 @@ function App() {
             <Route path="/login" element={<LogIn/>} />
             <Route path="/admin" element={<Admin/>} />
             <Route path="/adduser" element={<Signup/>} />
-            <Route path="/userlist" element={<ViewUser/>} />
             <Route path="/addstage" element={<AddStage/>} />
             <Route path="/stagelist" element={<ViewStage/>} />
-            <Route path="/user" element={<User/>}></Route>
-            <Route path='/approver' element={<Approver/>}></Route>
-            <Route path='/profile' element={<UserInfo/>}></Route>
-            <Route path='/history' element={<History/>}></Route>
+            <Route path="/user" element={<User/>}/>
+            <Route path='/approver' element={<Approver/>}/>
+            <Route path='/profile' element={<UserInfo/>}/>
+            <Route path='/history' element={<History/>}/>
           </Routes>
         </BrowserRouter>  
         <ToastContainer/>    

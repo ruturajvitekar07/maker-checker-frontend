@@ -10,18 +10,17 @@ import axios from 'axios';
 
 export default function Approver() {
 
-    const [filename, setFilename] = useState('')
     const [stageno, setStageno] = useState('')
     const [comment, setComment] = useState('')
     const [role, setRole] = useState('')
-    const [user, setUser] = useState([])
     const [fileData, setFileData] = useState([])
     const navigate = useNavigate()
     const email = sessionStorage.getItem('username');
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const responseType = { responseType: 'blob' };
 
-    const [show, setShow] = useState(false); 
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [show1, setShow1] = useState(false);
@@ -32,17 +31,16 @@ export default function Approver() {
         AppService.getUserInfo(email, header)
             .then((response) => {
                 if (response.status === 200) {
-                    setUser(response.data)
                     setRole(response.data.role)
                     if (response.data.role == "associate") {
                         pendingFiles("1")
                         setStageno("1")
                     }
-                    else if (response.data.role == "team lead") {                    
+                    else if (response.data.role == "team lead") {
                         pendingFiles("2")
                         setStageno("2")
                     }
-                    else if (response.data.role == "manager") {                        
+                    else if (response.data.role == "manager") {
                         pendingFiles("3")
                         setStageno("3")
                     }
@@ -52,7 +50,7 @@ export default function Approver() {
             })
 
     }
-   
+
 
     const pendingFiles = (stageno) => {
         console.log(stageno);
@@ -63,9 +61,8 @@ export default function Approver() {
             })
     }
 
-     const approveFile = (fileName) => {
+    const approveFile = (fileName) => {
         const status = "approved";
-       // const comment = "Good work"
         console.log(role);
         console.log(fileName);
         console.log(status);
@@ -77,11 +74,10 @@ export default function Approver() {
                 toast.success("Approved", { autoClose: 1000 })
             })
         pendingFiles(stageno)
-     }
+    }
 
-     const declineFile = (fileName) => {
+    const declineFile = (fileName) => {
         const status = "declined";
-      //  const comment = "Bad work"
         console.log(role);
         console.log(fileName);
         console.log(status);
@@ -93,7 +89,7 @@ export default function Approver() {
                 toast.success("Declined", { autoClose: 1000 })
             })
         pendingFiles(stageno)
-     }
+    }
 
 
     useEffect(() => {
@@ -101,20 +97,43 @@ export default function Approver() {
     }, [])
 
     const downloadFile = (filename) => {
-        const fileObj = {email, stageno, filename}
+        const fileObj = { email, stageno, filename }
         console.log(email)
         console.log(stageno)
         console.log(filename)
-        AppService.downloadFile(fileObj, header)
-        .then((response) => {
-            console.log(response.data)
-            toast.success("downloaded", {autoClose:1000})
-        })
-       
+        AppService.downloadFile(fileObj, header, responseType)
+            .then((response) => {
+                console.log(response.data)
+                toast.success("downloaded", { autoClose: 1000 })
+            })
+    };
 
-    }
-   
+    const downloadFile1 = async (filename) => {
+        console.log(email);
+        console.log(stageno);
+        console.log(filename);
+        const fileObj = { email, stageno, filename };
+        try {
+            const response = await axios.post('http://localhost:8080/file/download-file-byte1',
+                fileObj, header, { responseType: 'blob' }
+            );
+            let url = window.URL.createObjectURL(new Blob([response.data]));
+            let link = document.createElement('a');
+            link.href = link;
+            link.setAttribute('download', filename);
+            link.click();
+            toast.success("downloaded", { autoClose: 1000 })
+        } catch (error) {
+            toast.error(error);
+        }
+    };
 
+// const file = new Blob(response, { type: 'text/plain'});
+// const element = document.createElement("a");
+// element.href = URL.createObjectURL(file);
+// element.download = "download-" + Date.now() + ".txt";
+// document.body.appendChild(element); // Required for this to work in FireFox
+// element.click();
 
     const onLogout = () => {
         sessionStorage.removeItem('access_token')
@@ -146,7 +165,6 @@ export default function Approver() {
                                 <th className="table-primary">Date & Time</th>
                                 <th className="table-primary">Download</th>
                                 <th className="table-primary">Action</th>
-                                {/* <th className="table-primary">Comment</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -156,16 +174,9 @@ export default function Approver() {
                                         <td>{file.fileName}</td>
                                         <td>{file.timeStamp}</td>
                                         <td>
-                                            <button className='btn btn-info' onClick={() => downloadFile(file.fileName)}>Download</button>
+                                            <button className='btn btn-info' type='submit' onClick={() => downloadFile1(file.fileName)}>Download</button>
                                         </td>
-                                        {/* <td>
-                                            <button className='btn btn-success' onClick={() => approveFile(file.fileName)} >Approve</button>
-                                            &nbsp;
-                                            &nbsp;
-                                            <button className='btn btn-danger' onClick={() => declineFile(file.fileName)} >Decline</button>
-                                        </td> */}
-                                         <td>
-                                            {/* <button className='btn btn-success' onClick={() => approveFile(file.fileName)} >Approve</button> */}
+                                        <td>
                                             <Button variant="success" onClick={handleShow}>Approve</Button>
                                             <Modal show={show} onHide={handleClose}>
                                                 <Modal.Header closeButton>
@@ -196,7 +207,6 @@ export default function Approver() {
                                                 </Modal.Footer>
                                             </Modal>
                                             &nbsp;&nbsp;
-                                            {/* <button className='btn btn-danger' onClick={() => declineFile(file.fileName)} >Decline</button> */}
                                             <Button variant="danger" onClick={handleShow1}>Decline</Button>
                                             <Modal show={show1} onHide={handleClose1}>
                                                 <Modal.Header closeButton>
@@ -226,19 +236,7 @@ export default function Approver() {
                                                     </Button>
                                                 </Modal.Footer>
                                             </Modal>
-                                        </td> 
-                                        {/* <td>
-                                            <center>
-                                                <div className="row g-3 align-items-center">
-                                                    <div className="col-auto">
-                                                        <label htmlFor="comment" className="col-form-label">Comment :</label>
-                                                    </div>
-                                                    <div className="col-auto">
-                                                        <input type="text" placeholder="Enter reason" id="comment" value={comment} onChange={(e) => setComment(e.target.value)} className="form-control" />
-                                                    </div>
-                                                </div>
-                                            </center>
-                                        </td> */}
+                                        </td>
                                     </tr>
                                 )
                             }

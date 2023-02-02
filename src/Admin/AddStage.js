@@ -55,7 +55,7 @@ export default function AddStage() {
                             <div className="form-group mb-2">
                                 <label className="form-label"> Stage No : </label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     required
                                     placeholder="Enter stage number"
                                     name="no"
@@ -97,7 +97,7 @@ export default function AddStage() {
                             <div className="form-group mb-2">
                                 <label className="form-label"> Previous Stage No : </label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     required
                                     placeholder="Enter previous stage number"
                                     name="previousStage"
@@ -111,7 +111,7 @@ export default function AddStage() {
                             <div className="form-group mb-2">
                                 <label className="form-label"> Next Stage No : </label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     required
                                     placeholder="Enter next stage number"
                                     name="nextStage"

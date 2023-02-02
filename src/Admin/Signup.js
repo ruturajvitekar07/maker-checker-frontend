@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import axios from "axios";
-import AppService from '../Service/AppService'
 import Swal from 'sweetalert2';
 
 export default function Signup() {

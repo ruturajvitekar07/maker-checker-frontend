@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
 import { Link } from 'react-router-dom'
 
@@ -16,7 +17,7 @@ export default function ViewStage() {
       if (response.data != null) {
         setStages(response.data)
       } else {
-        toast.error("Failed")
+        toast.error("Failed", { autoClose: 1000 })
       }
     })
   }
@@ -56,9 +57,14 @@ export default function ViewStage() {
           </tbody>
         </table>
       </div>
-      <div className='my-lg-2' style={{alignContent: 'center', alignItems: 'center'}}>
+      <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
         <Link to="/addstage">
-          <a className="btn btn-primary">Create Stage</a>
+          <a className="btn btn-primary">Add Stage</a>
+        </Link>
+        &nbsp;
+        &nbsp;
+        <Link to="/admin">
+          <a className="btn btn-danger">Back</a>
         </Link>
       </div>
     </div>

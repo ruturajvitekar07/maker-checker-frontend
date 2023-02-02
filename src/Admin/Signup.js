@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import axios from "axios";
 import AppService from '../Service/AppService'
+import Swal from 'sweetalert2';
 
 export default function Signup() {
 
@@ -22,15 +23,29 @@ export default function Signup() {
         if (user.firstName.length === 0 || user.lastName.length === 0 || user.email.length === 0 || user.role.length === 0 || user.password.length === 0) {
             toast.error("Enter information correctly")
         } else {
-            axios.post("http://localhost:8080/admin/signup", user, header).then((response) => {
-                console.log(response.data);
-                if (response.status === 201) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: "Do you want to Add this record ?",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Add it!',
+                cancelButtonText: 'No, cancel!',
+            })
+            .then((response) => {
+                if(response.value){
+                    axios.post("http://localhost:8080/admin/signup", user, header);
                     console.log(response.data);
-                    toast.success('Signup successfull')
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added!',
+                        text: `${firstName} ${lastName}'s data has been Added.`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                     navigate('/adduser')
-                } else {
-                    toast.error("Signup failed")
-                }
+                }    
+            }).catch((error) => {
+                toast.error("Signup failed", {autoClose:1000})
             })
         }
     }

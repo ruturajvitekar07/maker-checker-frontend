@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import React from "react";
@@ -16,22 +16,20 @@ export default function Login() {
         e.preventDefault();
         const userCredentials = { username, password }
         if (username.length == 0) {
-            toast.warning('Please Enter username')
+            toast.warning('Please Enter username', { autoClose: 1000 })
         } else if (password.length == 0) {
-            toast.warning('Please Enter Password')
+            toast.warning('Please Enter Password', { autoClose: 1000 })
         } else {
             AppService.signin(userCredentials)
                 .then((response) => {
-                    console.log(response.data);
                     if (response.status === 200) {
-                        toast.success('Welcome to my Application')
+                        toast.success('Welcome to my Application', { autoClose: 1000 })
                         const access_token = response.data.access_token
                         const username = response.data.username
                         sessionStorage.setItem("access_token", access_token);
                         sessionStorage.setItem("username", username)
                         sessionStorage['access_token'] = access_token
                         sessionStorage['username'] = username
-                        console.log("1 : " + access_token);
                         if (username == "ADMIN")
                             navigate('/admin')
                         else {
@@ -40,8 +38,6 @@ export default function Login() {
                             AppService.getUserInfo(username, header)
                                 .then((response) => {
                                     if (response.status === 200) {
-                                        console.log(response.data);
-                                        console.log("role in userdetials : " + response.data.role);
                                         if (response.data.role === "developer") {
                                             navigate('/user')
                                         }
@@ -50,32 +46,32 @@ export default function Login() {
                                         }
                                         console.log("Data stored into user");
                                     } else {
-                                        console.error("Data not stored");
+                                        toast.error("Data not stored", { autoClose: 1000 });
                                     }
                                 })
                         }
                     }
                     else {
-                        toast.error('Invalid name or password')
+                        toast.error('Invalid name or password', { autoClose: 1000 })
                     }
                 })
         }
     }
 
     return (
-        <div className="container-fluid pt-5 pl-10">
-            <div className="row g-0 col-8 offset-2 mt-8" style={{ padding: 0, margin: 0, boxSizing: "border-box", boxShadow: "12px 12px 22px" }}>
+        <div className="container-fluid pt-5 pl-5">
+            <div className="row g-0 col-8 offset-2 mt-8" style={{ padding: 0, margin: 0, boxSizing: "border-box"}}>
                 <div className="col-lg-5">
-                    <img src={require('C:/Intellij/Frontend/maker_checker_frontend/src/Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} />
+                    <img src={require('../Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} />
                 </div>
                 <div className="col-lg-7 py-5">
-                    <h2 className="ml-6" style={{ textAlign: "center", fontSize: '4rem', fontWeight: 700 }}>Login</h2>
+                    <h2 className="ml-4" style={{ textAlign: "center", fontSize: '4rem', fontWeight: 700 }}>Login</h2>
                     {/* <form> */}
                     <div className="form-row py-3 pt-5">
                         <div className="offset-2 col-lg-7">
                             <input
                                 type="text"
-                                placeholder="Enter your username"
+                                placeholder="Enter username"
                                 name="username"
                                 required
                                 value={username}
@@ -101,7 +97,7 @@ export default function Login() {
                         <div className="offset-1 col-lg-10">
                             <div>
                                 {/* <p>Don't have an account? Register <Link to={"/adduser"}>here</Link></p> */}
-                                <button onClick={(e) => onLogin(e)} className="btn btn-success col-3" style={{ alignContent: "center" }}>Login</button>
+                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; <button onClick={(e) => onLogin(e)} className="btn btn-success col-3" style={{ alignContent: "center" }}>Login</button>
                             </div>
                         </div>
                     </div>

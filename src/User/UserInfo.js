@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
-import { Link } from 'react-router-dom'
 
 export default function UserInfo() {
 
@@ -25,7 +24,7 @@ export default function UserInfo() {
                     setEmail(response.data.email)
                     setRole(response.data.role)
                 } else {
-                    toast.error("Data not stored");
+                    toast.error("Data not stored", { autoClose: 1000 });
                 }
             })
     }, [])
@@ -92,11 +91,6 @@ export default function UserInfo() {
                                     onChange={(e) => setRole(e.target.value)}
                                 >
                                 </input>
-                            </div>
-                            <div className="mt-3">
-                                <Link to="/user">
-                                    <a className="btn btn-danger">Back</a>
-                                </Link>
                             </div>
                         </form>
                     </div>

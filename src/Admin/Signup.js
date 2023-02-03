@@ -61,6 +61,7 @@ export default function Signup() {
         <div className="container">
             <div className="row">
                 <h2 style={{ textAlign: 'center' }} className="mt-5">Register</h2>
+                <hr/>
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">
                         <form>

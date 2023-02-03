@@ -72,7 +72,7 @@ export default function Login() {
                     <h2 className="ml-4" style={{ textAlign: "center", fontSize: '4rem', fontWeight: 700 }}>Login</h2>
                     {/* <form> */}
                     <div className="form-row py-3 pt-5">
-                        <div className="offset-1 col-lg-10">
+                        <div className="offset-1 col-lg-9">
                             <input
                                 type="text"
                                 placeholder="Enter username"
@@ -85,7 +85,7 @@ export default function Login() {
 
                     </div>
                     <div className="form-row">
-                        <div className="offset-1 py-3 col-lg-10">
+                        <div className="offset-1 py-3 col-lg-9">
                             <input
                                 type="password"
                                 placeholder="Enter password"
@@ -101,7 +101,7 @@ export default function Login() {
                         <div className="offset-1 col-lg-10">
                             <div>
                                 {/* <p>Don't have an account? Register <Link to={"/adduser"}>here</Link></p> */}
-                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <button onClick={(e) => onLogin(e)} className="btn btn-success col-4" style={{ alignContent: "center" }}>Login</button>
+                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<button onClick={(e) => onLogin(e)} className="btn btn-success col-4" style={{ alignContent: "center" }}>Login</button>
                             </div>
                         </div>
                     </div>

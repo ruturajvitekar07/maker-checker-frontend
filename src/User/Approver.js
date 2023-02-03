@@ -128,12 +128,12 @@ export default function Approver() {
         }
     };
 
-// const file = new Blob(response, { type: 'text/plain'});
-// const element = document.createElement("a");
-// element.href = URL.createObjectURL(file);
-// element.download = "download-" + Date.now() + ".txt";
-// document.body.appendChild(element); // Required for this to work in FireFox
-// element.click();
+    // const file = new Blob(response, { type: 'text/plain'});
+    // const element = document.createElement("a");
+    // element.href = URL.createObjectURL(file);
+    // element.download = "download-" + Date.now() + ".txt";
+    // document.body.appendChild(element); // Required for this to work in FireFox
+    // element.click();
 
     const onLogout = () => {
         sessionStorage.removeItem('access_token')
@@ -153,10 +153,9 @@ export default function Approver() {
                     </Link>
                     &nbsp;
                     &nbsp;
+                    <button className='btn btn-primary' style={{ float: 'right' }} onClick={onLogout}>Logout</button>
                 </div>
-                <div className='my-lg-2'>
-                    <button className='btn btn-primary' style={{ marginLeft: 'auto' }} onClick={onLogout}>Logout</button>
-                </div>
+                <hr />
                 <div className='mt-4'>
                     <table className="table table-striped">
                         <thead>

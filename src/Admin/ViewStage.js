@@ -31,6 +31,7 @@ export default function ViewStage() {
       <div className='mt-5'>
         <h2 style={{ textAlign: 'center' }} >Stages</h2>
       </div>
+      <hr/>
       <div className='mt-4'>
         <table className="table table-striped">
           <thead style={{ textAlign: 'center' }}>

@@ -24,6 +24,7 @@ export default function History() {
       <div className='mt-5'>
         <h2 style={{ textAlign: 'center' }}>History</h2>
       </div>
+      <hr/>
       <div className='mt-4'>
         <table className="table table-striped">
           <thead>

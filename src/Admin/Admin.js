@@ -19,7 +19,7 @@ export default function Admin() {
         if (response.data != null) {
           setUsers(response.data)
         } else {
-          toast.error("failed", {autoClose:1000})
+          toast.error("failed", { autoClose: 1000 })
         }
       })
   }
@@ -28,7 +28,7 @@ export default function Admin() {
     AppService.deleteStageFile(header)
       .then((response) => {
         console.log(response.data);
-        toast.success("File deleted", {autoClose:1000})
+        toast.success("File deleted", { autoClose: 1000 })
       })
   }
 
@@ -44,7 +44,7 @@ export default function Admin() {
     }).
       then((response) => {
         if (response.value) {
-          AppService.deleteUserAccount(username,header);
+          AppService.deleteUserAccount(username, header);
           getUserList();
           Swal.fire({
             icon: 'success',
@@ -99,10 +99,9 @@ export default function Admin() {
             &nbsp;
             &nbsp;
             {/* <button className='btn btn-primary' onClick={deleteFile}>Delete Stagefile</button> */}
-            <div className='my-lg-2'>
-              <button className='btn btn-primary' onClick={onLogout}>Logout</button>
-            </div>
+            <button className='btn btn-primary' style={{ float: 'right' }} onClick={onLogout}>Logout</button>
           </div>
+          <hr/>
         </div>
         <div className='mt-4'>
           <table className="table table-striped">

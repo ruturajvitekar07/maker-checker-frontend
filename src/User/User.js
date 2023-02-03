@@ -40,7 +40,7 @@ export default function User() {
                     }
                 });
             console.log(response.data);
-            toast.success("File uploaded successfully", {autoClose:1000})
+            toast.success("File uploaded successfully", { autoClose: 1000 })
             getPendigFileList();
         } catch (error) {
             toast.error(error);
@@ -69,9 +69,7 @@ export default function User() {
                     </Link>
                     &nbsp;
                     &nbsp;
-                </div>
-                <div className='my-lg-2'>
-                    <button className='btn btn-primary' onClick={onLogout}>Logout</button>
+                    <button className='btn btn-primary' style={{ float: 'right' }} onClick={onLogout}>Logout</button>
                 </div>
                 <hr />
                 <div className='col-4'>

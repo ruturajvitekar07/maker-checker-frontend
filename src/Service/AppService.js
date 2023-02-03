@@ -23,7 +23,7 @@ class AppService {
         return axios.get(BASE_REST_API_URL + '/file/list/' + stageNo, header)
     }
 
-    getFileList(header) {
+    getFileAllList(header) {
         // http://localhost:8080/admin/get-all-filelist
         return axios.get(BASE_REST_API_URL + '/file/get-all-filelist', header)
     }

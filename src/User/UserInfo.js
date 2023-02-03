@@ -34,6 +34,7 @@ export default function UserInfo() {
         <div className="container">
             <div className="row">
                 <h2 style={{ textAlign: 'center' }} className="mt-5">Profile</h2>
+                <hr/>
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-3">
                     <div className="card-body">
                         <form>

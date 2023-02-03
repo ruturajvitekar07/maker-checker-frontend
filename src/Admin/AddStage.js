@@ -49,6 +49,7 @@ export default function AddStage() {
         <div className="container mt-5">
             <div className="row">
                 <h2 style={{ textAlign: 'center' }}>Add Stage</h2>
+                <hr/>
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">
                         <form>
@@ -124,7 +125,7 @@ export default function AddStage() {
                             <div className='mt-3'>
                                 <button className="btn btn-success" onClick={(e) => addStage(e)}>Submit</button>
                                 &nbsp;&nbsp;
-                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                                <Link to="/stagelist" className="btn btn-danger">Cancel</Link>
                             </div>
                         </form>
                     </div>

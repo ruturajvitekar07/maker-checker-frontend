@@ -55,7 +55,7 @@ export default function History() {
       </div>
       <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
         <Link to="/admin">
-          <a className="btn btn-danger">Back</a>
+          <a className="btn btn-danger" style={{ float: 'right' }}>Back</a>
         </Link>
       </div>
     </div>

@@ -46,19 +46,24 @@ class AppService {
         return axios.get(BASE_REST_API_URL + '/file/get-info/' + username)
     }
 
+    getUserWorkflowList(header) {
+        // http://localhost:8080/file/get-user-workflow-list
+        return axios.get(BASE_REST_API_URL + '/file/get-user-workflow-list', header)
+    }
+
     creteUser(user, header) {
         // http://localhost:8080/admin/signup
         return axios.post(BASE_REST_API_URL + '/admin/signup', user, header)
     }
 
-    getHistory(header){
+    getHistory(header) {
         // http://localhost:8080/admin/get-all-filelist
-        return axios.get(BASE_REST_API_URL+'/admin/get-all-filelist', header)
+        return axios.get(BASE_REST_API_URL + '/admin/get-all-filelist', header)
     }
 
-    getAllHistory(header){
+    getAllHistory(header) {
         // http://localhost:8080/admin/get-eachfile-history
-        return axios.get(BASE_REST_API_URL+'/admin/get-eachfile-history', header)
+        return axios.get(BASE_REST_API_URL + '/admin/get-eachfile-history', header)
     }
 
     deleteUserAccount(username, header) {
@@ -71,6 +76,16 @@ class AppService {
         return axios.get(BASE_REST_API_URL + '/admin/get-stage-data', header)
     }
 
+    getAllWorkflowsData(header) {
+        // http://localhost:8080/admin/get-all-workflows
+        return axios.get(BASE_REST_API_URL + '/admin/get-all-workflows', header)
+    }
+
+    getWorkflowList(header) {
+        // http://localhost:8080/admin/get-workflow-list
+        return axios.get(BASE_REST_API_URL + '/admin/get-workflow-list', header)
+    }
+
     deleteStageFile(header) {
         // http://localhost:8080/admin/delete-stage-data
         return axios.delete(BASE_REST_API_URL + '/admin/delete-stage-data', header)
@@ -79,6 +94,16 @@ class AppService {
     createStage(stage, header) {
         // http://localhost:8080/admin/add-stage
         return axios.post(BASE_REST_API_URL + '/admin/add-stage', stage, header)
+    }
+
+    createWorkflow(workflow, header) {
+        // http://localhost:8080/admin/addWorkFlow
+        return axios.post(BASE_REST_API_URL + '/admin/addWorkFlow', workflow, header)
+    }
+
+    createStageByWorkflowName(workFlowName, workFlowBody, header) {
+        // http://localhost:8080/admin/addStage-To-WorkFlow?workFlowName=v2
+        return axios.post(BASE_REST_API_URL + '/admin/addStage-To-WorkFlow?version=' + workFlowName, workFlowBody, header)
     }
 
     getUserList(header) {

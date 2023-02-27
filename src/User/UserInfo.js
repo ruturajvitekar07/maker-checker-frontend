@@ -1,15 +1,21 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
 
 export default function UserInfo() {
 
+    const navigate = useNavigate();
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
+
+    // const handleBackClick = () => {
+    //     navigate(-1);
+    // };
 
     useEffect(() => {
         const localStorageToken = sessionStorage.getItem("access_token");
@@ -34,7 +40,7 @@ export default function UserInfo() {
         <div className="container">
             <div className="row">
                 <h2 style={{ textAlign: 'center' }} className="mt-5">Profile</h2>
-                <hr/>
+                <hr />
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-3">
                     <div className="card-body">
                         <form>
@@ -48,6 +54,7 @@ export default function UserInfo() {
                                     className="form-control"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
+                                    disabled
                                 >
                                 </input>
                             </div>
@@ -62,6 +69,7 @@ export default function UserInfo() {
                                     className="form-control"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
+                                    disabled
                                 >
                                 </input>
                             </div>
@@ -76,6 +84,7 @@ export default function UserInfo() {
                                     className="form-control"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
+                                    disabled
                                 >
                                 </input>
                             </div>
@@ -90,8 +99,13 @@ export default function UserInfo() {
                                     className="form-control"
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
+                                    disabled
                                 >
                                 </input>
+                            </div>
+
+                            <div> {/* profile page content goes here */}
+                                {/* <button className='btn btn-danger' onClick={handleBackClick}>Back</button> */}
                             </div>
                         </form>
                     </div>

@@ -32,12 +32,13 @@ export default function Login() {
                         sessionStorage['username'] = username
                         if (username == "ADMIN")
                             navigate('/admin')
-                        else {
+                        else if (username !== null) {
                             const localStorageToken = sessionStorage.getItem("access_token");
                             const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
                             AppService.getUserInfo(username, header)
                                 .then((response) => {
                                     if (response.status === 200) {
+                                        console.log(response.data.role);
                                         if (response.data.role === "developer") {
                                             navigate('/user')
                                         }
@@ -51,9 +52,10 @@ export default function Login() {
                                 })
                         }
                     }
-                    else {
-                        toast.error('Invalid name or password', { autoClose: 1000 })
-                    }
+
+                })
+                .catch((error) => {
+                    toast.error('Invalid name or password', { autoClose: 1000 })
                 })
         }
     }
@@ -63,49 +65,50 @@ export default function Login() {
     }
 
     return (
-        <div className="container-fluid col-8 offset-2 mt-5">
-            <div className="row g-0 col-12" style={{ padding: 0, margin: 0, boxSizing: "border-box"}}>
-                <div className="col-5">
-                    <img src={require('../Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} onClick={goHome}/>
-                </div>
-                <div className="col-7 py-5">
-                    <h2 className="ml-4" style={{ textAlign: "center", fontSize: '4rem', fontWeight: 700 }}>Login</h2>
-                    {/* <form> */}
-                    <div className="form-row py-3 pt-5">
-                        <div className="offset-1 col-lg-9">
-                            <input
-                                type="text"
-                                placeholder="Enter username"
-                                name="username"
-                                required
-                                value={username}
-                                className="form-control"
-                                onChange={(e) => { setUsername(e.target.value) }} />
-                        </div>
-
+        <div className="container-fluid">
+            <div className="container-fluid col-8 offset-2 mt-5">
+                <div className="row g-0 col-12" style={{ padding: 0, margin: 0, boxSizing: "border-box" }}>
+                    <div className="col-5">
+                        <img src={require('../Images/welcome.jpg')} className="img-fluid" alt="Maker-Checker" style={{ height: '500px', width: '900px', borderTopLeftRadius: '17px', borderBottomLeftRadius: '17px' }} onClick={goHome} />
                     </div>
-                    <div className="form-row">
-                        <div className="offset-1 py-3 col-lg-9">
-                            <input
-                                type="password"
-                                placeholder="Enter password"
-                                name="password"
-                                value={password}
-                                required
-                                className="form-control"
-                                onChange={(e) => { setPassword(e.target.value) }} />
-                        </div>
-                    </div>
+                    <div className="col-7 py-5">
+                        <h2 className="ml-4" style={{ textAlign: "center", fontSize: '3rem', fontWeight: 700 }}>Login</h2>
+                        <form>
+                            <div className="form-row py-3 pt-5">
+                                <div className="offset-1 col-lg-9">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter username"
+                                        name="username"
+                                        required
+                                        value={username}
+                                        className="form-control"
+                                        onChange={(e) => { setUsername(e.target.value) }} />
+                                </div>
 
-                    <div className="form-row py-3">
-                        <div className="offset-1 col-lg-10">
-                            <div>
-                                {/* <p>Don't have an account? Register <Link to={"/adduser"}>here</Link></p> */}
-                                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<button onClick={(e) => onLogin(e)} className="btn btn-success col-4" style={{ alignContent: "center" }}>Login</button>
                             </div>
-                        </div>
+                            <div className="form-row">
+                                <div className="offset-1 py-3 col-lg-9">
+                                    <input
+                                        type="password"
+                                        placeholder="Enter password"
+                                        name="password"
+                                        value={password}
+                                        required
+                                        className="form-control"
+                                        onChange={(e) => { setPassword(e.target.value) }} />
+                                </div>
+                            </div>
+
+                            <div className="form-row py-3">
+                                <div className="offset-1 col-lg-10">
+                                    <div>
+                                        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<button onClick={(e) => onLogin(e)} className="btn btn-success col-4" style={{ alignContent: "center" }}>Login</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    {/* </form> */}
                 </div>
             </div>
         </div>

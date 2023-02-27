@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react'
-import LogIn from './LogIn/Login';
+import NewLogin from './LogIn/NewLogin';
 import Admin from './Admin/Admin';
 import AddStage from './Admin/AddStage';
 import ViewStage from './Admin/ViewStage';
@@ -13,7 +13,11 @@ import Approver from './User/Approver';
 import Signup from './Admin/Signup';
 import UserInfo from './User/UserInfo';
 import History from './Admin/History';
-
+import Workflow from './Admin/Workflow';
+import Example from './Home/Exampe';
+import ApprovedFiles from './User/ApprovedFiles';
+import NewFooter from './Navbars/NewFooter';
+import Demo from './Home/Demo'
 
 function App() {
   return (
@@ -22,7 +26,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home/>} />
-            <Route path="/login" element={<LogIn/>} />
+            {/* <Route path="/login" element={<LogIn/>} /> */}
             <Route path="/admin" element={<Admin/>} />
             <Route path="/adduser" element={<Signup/>} />
             <Route path="/addstage" element={<AddStage/>} />
@@ -31,9 +35,15 @@ function App() {
             <Route path='/approver' element={<Approver/>}/>
             <Route path='/profile' element={<UserInfo/>}/>
             <Route path='/history' element={<History/>}/>
+            <Route path='/workflow' element={<Workflow/>}/>
+            <Route path='/example' element={<Example/>}/>
+            <Route path='/demo' element={<Demo/>}/>
+            <Route path='/login' element={<NewLogin/>}/>
+            <Route path='/approvedfiles' element={<ApprovedFiles/>}/>
           </Routes>
         </BrowserRouter>  
-        <ToastContainer/>    
+        <ToastContainer/>
+        <NewFooter></NewFooter>    
       </div>
     </React.Fragment>
   );

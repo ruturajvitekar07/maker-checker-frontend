@@ -4,33 +4,67 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
 import Swal from 'sweetalert2';
+import AdminNavbar from '../Navbars/AdminNavbar';
 
 export default function Admin() {
 
   const [users, setUsers] = useState([])
   const navigate = useNavigate()
+  const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
   const getUserList = () => {
     AppService.getUserList(header)
       .then((response) => {
-        console.log(response.data)
-        if (response.data != null) {
-          setUsers(response.data)
-        } else {
-          toast.error("failed", { autoClose: 1000 })
-        }
+        setUsers(response.data);
       })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to fetch user data");
+      });
+    // .then((response) => {
+    //   console.log(response.data)
+    //   if (response.data != null) {
+    //     setUsers(response.data)
+    //   } else {
+    //     toast.error("failed", { autoClose: 1000 })
+    //   }
+    // })
   }
 
   const deleteFile = () => {
     AppService.deleteStageFile(header)
       .then((response) => {
         console.log(response.data);
-        toast.success("File deleted", { autoClose: 1000 })
+        if (response.status === 200) {
+          Swal.fire({
+            icon: 'success',
+            title: 'File deleted',
+            showConfirmButton: false,
+            timer: 1000
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Unable to delete file',
+            text: 'Please try again later.'
+          });
+        }
       })
+    // .then((response) => {
+    //   console.log(response.data);
+    //   if (response.status === 200) {
+    //     Swal.fire({
+    //       icon: 'success',
+    //       title: 'File deleted',
+    //       showConfirmButton: false,
+    //       timer: 1000
+    //     });
+    //   }
+    // })
   }
+
 
   const deleteUser = (username) => {
     console.log(username);
@@ -44,21 +78,29 @@ export default function Admin() {
     }).
       then((response) => {
         if (response.value) {
-          AppService.deleteUserAccount(username, header);
-          getUserList();
-          Swal.fire({
-            icon: 'success',
-            title: 'Deleted!',
-            text: `${username}'s data has been deleted.`,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          getUserList();
+          AppService.deleteUserAccount(username, header)
+            .then(
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: `${username}'s data has been deleted.`,
+                showConfirmButton: false,
+                timer: 1500,
+              })
+            )
+            .catch((error) => {
+              toast.warning(error);
+            })
         }
       }).catch((error) => {
         console.log(error)
       })
   }
+
+  useEffect(() => {
+    setUsers(users.filter(user => user.username !== username));
+    getUserList()
+  }, [])
 
   const onLogout = () => {
     sessionStorage.removeItem('access_token')
@@ -68,40 +110,12 @@ export default function Admin() {
     navigate('/login')
   }
 
-  useEffect(() => {
-    getUserList()
-  }, [])
-
   return (
     <div className="imageBack">
       <div className="col">
-        <div className='mt-5'>
-          <h2 className="title mt-5" style={{ textAlign: 'center' }}>Admin Console</h2>
-          <div className='mt-4'>
-            {/* <Link to="/userlist">
-              <a className="btn btn-primary">View Users</a>
-            </Link>
-            &nbsp;
-            &nbsp; */}
-            <Link to="/history">
-              <a className="btn btn-primary">History</a>
-            </Link>
-            &nbsp;
-            &nbsp;
-            <Link to="/stagelist">
-              <a className="btn btn-primary">View Stages</a>
-            </Link>
-            &nbsp;
-            &nbsp;
-            <Link to="/adduser">
-              <a className="btn btn-primary">Add User</a>
-            </Link>
-            &nbsp;
-            &nbsp;
-            {/* <button className='btn btn-primary' onClick={deleteFile}>Delete Stagefile</button> */}
-            <button className='btn btn-primary' style={{ float: 'right' }} onClick={onLogout}>Logout</button>
-          </div>
-          <hr/>
+        <div className='mt-3'>
+          <AdminNavbar username={username} onClick={onLogout} />
+          <hr />
         </div>
         <div className='mt-4'>
           <table className="table table-striped">

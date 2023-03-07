@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react'
 import React from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import AppService from '../Service/AppService'
-import { Link } from 'react-router-dom'
-
+import AppService from '../Service/AppService';
+import { Link } from 'react-router-dom';
 
 export default function ViewStage() {
 
-  const [workFlows, setWorkFlows] = useState([]);
+  const [workFlows, setWorkFlows] = useState();
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
   const localStorageToken = sessionStorage.getItem("access_token");
@@ -74,31 +73,46 @@ export default function ViewStage() {
               </tr>
             </thead>
             <tbody style={{ textAlign: 'center' }}>
-              {workFlows.find((workflow) => workflow.version === selectedWorkflow).stages[0].stageList.map((stage) => (
-                <tr key={stage.name}>
-                  <td>{stage.name}</td>
-                  <td>{stage.no}</td>
-                  <td>{stage.role}</td>
-                  <td>{stage.previousStage}</td>
-                  <td>{stage.nextStage}</td>
-                  <td>{stage.notification.email}</td>
-                  <td>{stage.notification.mobileNo}</td>
+              {/* {
+              workFlows.find((workflow) => workflow.version === selectedWorkflow).stages[0].stage.map((stage1) => (
+                <tr key={stage1.name}>
+                  <td>{stage1.name}</td>
+                  <td>{stage1.no}</td>
+                  <td>{stage1.role}</td>
+                  <td>{stage1.previousStage}</td>
+                  <td>{stage1.nextStage}</td>
+                  <td>{stage1.notification.email}</td>
+                  <td>{stage1.notification.mobileNo}</td>
                 </tr>
+              ))} */}
+              {workFlows.map((workflow) => (
+                workflow.version === selectedWorkflow &&
+                  workflow.stages[0].stage.length >  0 ?
+                  workflow.stages[0].stage.map((stage1) => (
+                    <tr key={stage1.name}>
+                      <td>{stage1.name}</td>
+                      <td>{stage1.no}</td>
+                      <td>{stage1.role}</td>
+                      <td>{stage1.previousStage}</td>
+                      <td>{stage1.nextStage}</td>
+                      <td>{stage1.notification.email}</td>
+                      <td>{stage1.notification.mobileNo}</td>
+                    </tr>
+                  ))
+                  :
+                  <tr key="not-found">
+                    <td colSpan="7">Data not present</td>
+                  </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
-      {/* <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
-        <Link to="/workflow">
-          <a className="btn btn-primary">Add Workflow</a>
-        </Link>
-        &nbsp;
-        &nbsp;
+      <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
         <Link to="/admin">
-          <a className="btn btn-danger">Back</a>
+          <a className="btn btn-danger" style={{ float: 'right' }}>Back</a>
         </Link>
-      </div> */}
+      </div>
     </div>
   )
 }

@@ -23,14 +23,6 @@ export default function Admin() {
         console.error(error);
         toast.error("Failed to fetch user data");
       });
-    // .then((response) => {
-    //   console.log(response.data)
-    //   if (response.data != null) {
-    //     setUsers(response.data)
-    //   } else {
-    //     toast.error("failed", { autoClose: 1000 })
-    //   }
-    // })
   }
 
   const deleteFile = () => {
@@ -41,6 +33,8 @@ export default function Admin() {
           Swal.fire({
             icon: 'success',
             title: 'File deleted',
+            toast: true,
+            position: 'top-end',
             showConfirmButton: false,
             timer: 1000
           });
@@ -52,53 +46,48 @@ export default function Admin() {
           });
         }
       })
-    // .then((response) => {
-    //   console.log(response.data);
-    //   if (response.status === 200) {
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'File deleted',
-    //       showConfirmButton: false,
-    //       timer: 1000
-    //     });
-    //   }
-    // })
   }
 
 
-  const deleteUser = (username) => {
+  const deleteUser = async (username) => {
     console.log(username);
-    Swal.fire({
-      icon: 'warning',
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
-    }).
-      then((response) => {
-        if (response.value) {
-          AppService.deleteUserAccount(username, header)
-            .then(
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: `${username}'s data has been deleted.`,
-                showConfirmButton: false,
-                timer: 1500,
-              })
-            )
-            .catch((error) => {
-              toast.warning(error);
-            })
+    try {
+      const response = await Swal.fire({
+        icon: 'warning',
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+      });
+
+      if (response.isConfirmed) {
+        const deleteResponse = await AppService.deleteUserAccount(username, header);
+        if (deleteResponse.status === 200) {
+          const updatedUsers = users.filter(user => user.username !== username);
+          console.log(updatedUsers);
+          setUsers(updatedUsers);
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: `${username}'s data has been deleted.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
+          toast.warning('Failed to delete user');
         }
-      }).catch((error) => {
-        console.log(error)
-      })
-  }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.warning(error);
+    }
+  };
+
 
   useEffect(() => {
-    setUsers(users.filter(user => user.username !== username));
     getUserList()
   }, [])
 
@@ -111,15 +100,15 @@ export default function Admin() {
   }
 
   return (
-    <div className="imageBack">
+    <div className="container">
       <div className="col">
         <div className='mt-3'>
           <AdminNavbar username={username} onClick={onLogout} />
-          <hr />
+          {/* <hr /> */}
         </div>
-        <div className='mt-4'>
+        <div className='mt-4 col-10 offset-1'>
           <table className="table table-striped">
-            <thead style={{ textAlign: 'center' }}>
+            <thead>
               <tr>
                 <th className="table-primary">Name</th>
                 <th className="table-primary">Email</th>
@@ -127,7 +116,7 @@ export default function Admin() {
                 <th className="table-primary">Action</th>
               </tr>
             </thead>
-            <tbody style={{ textAlign: 'center' }}>
+            <tbody>
               {
                 users.map((user) =>
                   <tr key={user.email}>

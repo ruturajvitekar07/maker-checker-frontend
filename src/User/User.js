@@ -7,17 +7,40 @@ import axios from "axios";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import UserNavbar from '../Navbars/UserNavbar';
+import Swal from 'sweetalert2';
 
 export default function User() {
 
     const navigate = useNavigate()
     const [fileDatas, setFileDatas] = useState([])
     const [workflow, setWorkflow] = useState([])
-    const [workflowName, setWorkflowName] = useState('A1')
+    const [workflowData, setWorkflowData] = useState()
+    const [role, setRole] = useState('')
+    // const [workflowName, setWorkflowName] = useState('A1')
     const [file, setFile] = useState(null);
     const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+
+    const userInfo = () => {
+        AppService.getUserInfo(username, header)
+            .then((response) => {
+                console.log(response.data);
+                setWorkflowData(response.data);
+                setRole(response.data.role)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    // Get the workflow with version A1
+    const version = workflowData.workflows.find(workflow => workflow.version === workflow);
+    // Get the stage with role developer
+    const stageForDeveloper = version.stages[0].stage.find(stage => stage.role === role);
+    // Get the name of the stage
+    const stageName = stageForDeveloper.name;
+    console.log(stageName);
 
     const currentStatus = [
         { status: "Approved by developer" },
@@ -27,27 +50,28 @@ export default function User() {
         { status: "Approval pending for general manager" },
     ];
 
+    const workflowList = () => {
+        AppService.getUserWorkflowList(header)
+            .then((response) => {
+                console.log(response.data);
+                console.log(response.data[0]);
+                setWorkflow(response.data[0]);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     const getPendigFileList = () => {
-        AppService.getFileList("1", header)
+        AppService.getFileList(workflow, stageName, header)
             .then((response) => {
                 console.log(response.data);
                 setFileDatas(response.data);
             })
     }
 
-    const workflowList = () => {
-        AppService.getUserWorkflowList(header)
-            .then((response) => {
-                console.log(response.data);
-                setWorkflow(response.data);
-            }).catch((error) => {
-                console.log(error);
-            })
-    }
-
     const Handlechangeselect = (event) => {
         console.log("==workflow==", event.target.value);
-        setWorkflowName(event.target.value)
+        // setWorkflowName(event.target.value)
     }
 
     const handleFileInput = (event) => {
@@ -56,25 +80,42 @@ export default function User() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setWorkflowName('A1')
         const formData = new FormData();
         formData.append('file', file);
-        console.log(workflowName);
-        console.log(localStorageToken);
-        // formData.append('localStorageToken', localStorageToken);
-        try {
-            const response = await axios.post("http://localhost:8080/file/upload", formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorageToken}`
-                    }
+        formData.append('workflowName', workflow);
+        if (file.type === 'application/pdf') {
+            try {
+                const response = await axios.post("http://localhost:8080/file/upload", formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorageToken}`
+                        }
+                    });
+                console.log(response.data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'File uploaded successfully',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
-            console.log(response.data);
-            toast.success("File uploaded successfully", { autoClose: 1000 })
-            getPendigFileList();
-        } catch (error) {
-            toast.error(error);
+            } catch (error) {
+                toast.error(error);
+            }
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid file type',
+                toast: true,
+                position: 'top-end',
+                text: 'Please upload only PDF files',
+                timer: 1500
+            });
         }
+
+
     };
 
     const ViewHistory = (namefile) => {
@@ -82,10 +123,8 @@ export default function User() {
     };
 
     const onLogout = () => {
-        sessionStorage.removeItem('access_token')
-        localStorage.removeItem('access_token')
-        sessionStorage.removeItem('username')
-        localStorage.removeItem('username')
+        sessionStorage.clear();
+        localStorage.clear();
         navigate('/login')
     }
 
@@ -112,9 +151,7 @@ export default function User() {
     return (
         <div className="container">
             <div className='mt-3'>
-                <UserNavbar username={username}/>
-                <hr />
-
+                <UserNavbar username={username} onClick={onLogout} />
                 <div className='row'>
                     <div className='col-4'>
                         <div className="mb-3">

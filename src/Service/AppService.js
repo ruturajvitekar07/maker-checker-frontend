@@ -14,13 +14,13 @@ class AppService {
     }
 
     downloadFile(fileObject, header, responseType) {
-        // http://localhost:8080/file/download-file
-        return axios.post(BASE_REST_API_URL + '/file/download-file', fileObject, header, responseType)
+        // http://localhost:8080/file/download
+        return axios.post(BASE_REST_API_URL + '/file/download', fileObject, header, responseType)
     }
 
-    getFileList(stageNo, header) {
-        // http://localhost:8080/file/list/stageNo
-        return axios.get(BASE_REST_API_URL + '/file/list/' + stageNo, header)
+    getFileList(workfloName, stageName, header) {
+        // http://localhost:8080/file/list?workflowname=A1&stagename=upload
+        return axios.get(BASE_REST_API_URL + '/file/list?workflowname=' + workfloName +'&stagename='+ stageName, header)
     }
 
     getFileAllList(header) {
@@ -28,14 +28,14 @@ class AppService {
         return axios.get(BASE_REST_API_URL + '/file/get-all-filelist', header)
     }
 
-    getUserInfo(username, header) {
+    getUserInfo(header) {
         // http://localhost:8080/file/get-info/ruturaj@gmail.com
-        return axios.get(BASE_REST_API_URL + '/file/get-info/' + username, header)
+        return axios.get(BASE_REST_API_URL + '/file/get-info', header)
     }
 
     fileApproveDecline(decision, header) {
-        // http://localhost:8080/file/fileapprove
-        return axios.post(BASE_REST_API_URL + '/file/fileapprove', decision, header)
+        // http://localhost:8080/file/file-approve
+        return axios.post(BASE_REST_API_URL + '/file/file-approve', decision, header)
 
         // http://localhost:8080/file/fileapprove?role=team lead&filename=elk.jpg&status=approved
         // return axios.get(BASE_REST_API_URL + '/file/fileapprove?role=' + role + '&filename=' + filename + '&status=' + status, header)
@@ -97,8 +97,8 @@ class AppService {
     }
 
     createWorkflow(workflow, header) {
-        // http://localhost:8080/admin/addWorkFlow
-        return axios.post(BASE_REST_API_URL + '/admin/addWorkFlow', workflow, header)
+        // http://localhost:8080/admin/addWorkflow
+        return axios.post(BASE_REST_API_URL + '/admin/addWorkflow', workflow, header)
     }
 
     createStageByWorkflowName(workFlowName, workFlowBody, header) {

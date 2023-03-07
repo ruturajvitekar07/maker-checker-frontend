@@ -10,7 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Workflow() {
 
     const [version, setVersion] = useState('')
-    const [workflowId, setWorkflowId] = useState('')
     const [workflows, setWorkflows] = useState([])
     const navigate = useNavigate()
     const localStorageToken = sessionStorage.getItem("access_token");
@@ -29,7 +28,7 @@ export default function Workflow() {
     }
 
     const addWorkflow = (event) => {
-        const workflow = { version, workflowId };
+        const workflow = { version };
         event.preventDefault();
         Swal.fire({
             icon: 'warning',
@@ -41,14 +40,15 @@ export default function Workflow() {
         })
             .then((response) => {
                 if (response.value) {
-                    // console.log(workflow);
                     AppService.createWorkflow(workflow, header)
                         .then((response) => {
                             if (response.status === 200) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Added!',
-                                    text: 'Workflow data has been Added',
+                                    text: 'Workflow has been Added',
+                                    toast: true,
+                                    position: 'top-end',
                                     showConfirmButton: false,
                                     timer: 1500
                                 });
@@ -63,20 +63,6 @@ export default function Workflow() {
                         });
                 }
             })
-        // .then((response) => {
-        //     if (response.value) {
-        //         // console.log(workflow);
-        //         AppService.createWorkflow(workflow, header);
-        //         Swal.fire({
-        //             icon: 'success',
-        //             title: 'Added!',
-        //             text: 'Workflow data has been Added',
-        //             showConfirmButton: false,
-        //             timer: 1500
-        //         });
-        //         navigate('/workflow')
-        //     }
-        // })
     }
 
     useEffect(() => {
@@ -84,16 +70,10 @@ export default function Workflow() {
     }, [])
 
     return (
-        <div className="container mt-5">
-            <div className="row">
+        <div className="container mt-3">
+            <div className="row mb-4">
                 <h2 style={{ textAlign: 'center' }}>Add Workflow</h2>
-                {/* <div className='mt-2'>
-                    <Link to="/addstage" style={{ float: 'right' }}>
-                        <a className="btn btn-primary">Add Stage</a>
-                    </Link>
-                </div> */}
             </div>
-            <hr className='mt-3' />
             <div class="row">
                 <div class="col">
                     <div className='col-10 offset-1'>
@@ -122,20 +102,6 @@ export default function Workflow() {
                             <div className='row-fluid'>
                                 <div className="card-body">
                                     <form>
-                                        <div className="form-group mb-2 mt-2">
-                                            <label className="form-label"> Workflow Id : </label>
-                                            <input
-                                                type="number"
-                                                required
-                                                placeholder="Enter workflow id"
-                                                name="workFlowName"
-                                                className="form-control"
-                                                value={workflowId}
-                                                onChange={(e) => setWorkflowId(e.target.value)}
-                                            >
-                                            </input>
-                                        </div>
-
                                         <div className="form-group mb-2 mt-2">
                                             <label className="form-label"> Workflow Name : </label>
                                             <input

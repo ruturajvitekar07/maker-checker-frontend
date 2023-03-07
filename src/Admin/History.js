@@ -24,7 +24,7 @@ export default function History() {
       <div className='mt-5'>
         <h2 style={{ textAlign: 'center' }}>History</h2>
       </div>
-      <hr/>
+      <hr />
       <div className='mt-4'>
         <table className="table table-striped">
           <thead>
@@ -43,7 +43,7 @@ export default function History() {
                 <tr key={hdata.timestamp}>
                   <td>{hdata.fileName}</td>
                   <td>{hdata.timeStamp}</td>
-                  <td>{hdata.stageNo}</td>
+                  <td>{hdata.stageName}</td>
                   <td>{hdata.status}</td>
                   <td>{hdata.userName}</td>
                   <td>{hdata.roleOfChecker}</td>

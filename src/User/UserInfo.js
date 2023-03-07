@@ -13,15 +13,10 @@ export default function UserInfo() {
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
 
-    // const handleBackClick = () => {
-    //     navigate(-1);
-    // };
-
     useEffect(() => {
         const localStorageToken = sessionStorage.getItem("access_token");
-        const username = sessionStorage.getItem("username");
         const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-        AppService.getUserInfo(username, header)
+        AppService.getUserInfo(header)
             .then((response) => {
                 if (response.status === 200) {
                     console.log(response.data);
@@ -104,8 +99,8 @@ export default function UserInfo() {
                                 </input>
                             </div>
 
-                            <div> {/* profile page content goes here */}
-                                {/* <button className='btn btn-danger' onClick={handleBackClick}>Back</button> */}
+                            <div>
+                                <button className='btn btn-danger' onClick={() => navigate("/user")}>Back</button>
                             </div>
                         </form>
                     </div>

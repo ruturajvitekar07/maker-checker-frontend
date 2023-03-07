@@ -3,7 +3,7 @@ import React from 'react'
 export default function UserNavbar(props) {
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary mt-3 me-auto" style={{ display: "flex", justifyContent: "space-between" }}>
+        <nav className="navbar navbar-expand-lg navbar-dark mt-3 me-auto ml-lg-2" style={{backgroundColor:'hsl(218, 41%, 30%)'}}>
             <div className="container-fluid">
                 <a className="navbar-brand" href="/user">Welcome {props.username}</a>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">

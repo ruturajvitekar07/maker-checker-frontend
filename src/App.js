@@ -1,9 +1,10 @@
 import './App.css';
 import Home from './Home/Home';
-import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react'
+import Login1 from './LogIn/Login1';
 import NewLogin from './LogIn/NewLogin';
 import Admin from './Admin/Admin';
 import AddStage from './Admin/AddStage';
@@ -18,6 +19,8 @@ import Example from './Home/Exampe';
 import ApprovedFiles from './User/ApprovedFiles';
 import NewFooter from './Navbars/NewFooter';
 import Demo from './Home/Demo'
+import Form1 from './Home/Form1';
+import Carousel from './Home/Carousel';
 
 function App() {
   return (
@@ -39,7 +42,10 @@ function App() {
             <Route path='/example' element={<Example/>}/>
             <Route path='/demo' element={<Demo/>}/>
             <Route path='/login' element={<NewLogin/>}/>
+            {/* <Route path='/login1' element={<Login1/>}/> */}
             <Route path='/approvedfiles' element={<ApprovedFiles/>}/>
+            {/* <Route path='/form1' element={<Form1/>}/> */}
+            {/* <Route path='/car' element={<Carousel/>}/> */}
           </Routes>
         </BrowserRouter>  
         <ToastContainer/>

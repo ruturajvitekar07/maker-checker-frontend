@@ -42,14 +42,20 @@ export default function ViewStage() {
     workflowList()
   }, [])
 
+  useEffect(() => {
+    if (workflows1.length > 0) {
+      setSelectedWorkflow(workflows1[0]);
+    }
+  }, [workflows1]);
+
   return (
     <div className="container">
-      <div className='mt-5'>
-        <h2 style={{ textAlign: 'center' }} >Stages</h2>
+      <div className='mt-4'>
+        <h2 className='mt-3' style={{ textAlign: 'center'}} >Stages</h2>
       </div>
-      <hr />
       <div className='col-4'>
-        <select className="form-select" value={selectedWorkflow} onChange={(event) => setSelectedWorkflow(event.target.value)}>
+        <label htmlFor='drop'className='mb-2'>Choose Workflow : </label>
+        <select className="form-select" name='drop' value={selectedWorkflow} onChange={(event) => setSelectedWorkflow(event.target.value)}>
           <option defaultValue={"Select a workflow"} disabled>Select a workflow</option>
           {workflows1.map((work) => (
             <option value={work} key={work}>
@@ -73,37 +79,23 @@ export default function ViewStage() {
               </tr>
             </thead>
             <tbody style={{ textAlign: 'center' }}>
-              {/* {
-              workFlows.find((workflow) => workflow.version === selectedWorkflow).stages[0].stage.map((stage1) => (
-                <tr key={stage1.name}>
-                  <td>{stage1.name}</td>
-                  <td>{stage1.no}</td>
-                  <td>{stage1.role}</td>
-                  <td>{stage1.previousStage}</td>
-                  <td>{stage1.nextStage}</td>
-                  <td>{stage1.notification.email}</td>
-                  <td>{stage1.notification.mobileNo}</td>
-                </tr>
-              ))} */}
-              {workFlows.map((workflow) => (
-                workflow.version === selectedWorkflow &&
-                  workflow.stages[0].stage.length >  0 ?
-                  workflow.stages[0].stage.map((stage1) => (
-                    <tr key={stage1.name}>
-                      <td>{stage1.name}</td>
-                      <td>{stage1.no}</td>
-                      <td>{stage1.role}</td>
-                      <td>{stage1.previousStage}</td>
-                      <td>{stage1.nextStage}</td>
-                      <td>{stage1.notification.email}</td>
-                      <td>{stage1.notification.mobileNo}</td>
-                    </tr>
-                  ))
-                  :
-                  <tr key="not-found">
-                    <td colSpan="7">Data not present</td>
+            {workFlows.find((workflow) => workflow.version === selectedWorkflow)?.stages?.[0]?.stage?.length > 0 ? (
+                workFlows.find((workflow) => workflow.version === selectedWorkflow).stages[0].stage.map((stage1) => (
+                  <tr key={stage1.name}>
+                    <td>{stage1.name}</td>
+                    <td>{stage1.no}</td>
+                    <td>{stage1.role}</td>
+                    <td>{stage1.previousStage}</td>
+                    <td>{stage1.nextStage}</td>
+                    <td>{stage1.notification.email}</td>
+                    <td>{stage1.notification.mobileNo}</td>
                   </tr>
-              ))}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">Data not present, Please insert stages in workflow : {selectedWorkflow}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         )}

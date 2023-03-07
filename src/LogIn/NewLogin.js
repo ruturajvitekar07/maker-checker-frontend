@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
 import styles from '../LogIn/myStyle.module.css';
 import Navbars from "../Navbars/Navbars";
+import Swal from 'sweetalert2';
 
 const NewLogin = () => {
 
@@ -46,18 +47,25 @@ const NewLogin = () => {
                                 .then((response) => {
                                     if (response.status === 200) {
                                         console.log(response.data.role);
-                                        if (response.data.role === "developer") {
-                                            setIsLoggedIn(true);
-                                            console.log(response.data.role);
-                                            setRole(response.data.role);
-                                        }
-                                        else {
-                                            setIsLoggedIn(true);
-                                            console.log(response.data.role);
-                                            setRole(response.data.role);
-                                        }
+                                        // if (response.data.role === "developer") {
+                                        setIsLoggedIn(true);
+                                        console.log(response.data.role);
+                                        setRole(response.data.role);
+                                        // }
+                                        // else {
+                                        //     setIsLoggedIn(true);
+                                        //     console.log(response.data.role);
+                                        //     setRole(response.data.role);
+                                        // }
                                     } else {
-                                        toast.error("Data not stored", { autoClose: 1000 });
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Something went wrong!',
+                                            toast: true,
+                                            footer: 'Please try again later',
+                                            timer: 1500
+                                        })
                                     }
                                 })
 
@@ -65,21 +73,11 @@ const NewLogin = () => {
                     }
                 })
                 .catch((error) => {
+                    console.error(error);
                     toast.error('Invalid name or password', { autoClose: 1000 })
                 })
         }
     };
-
-    // const onLogout = () => {
-    //     setIsLoggedIn(false);
-    //     setRole('');
-    //     sessionStorage.removeItem('access_token')
-    //     localStorage.removeItem('access_token')
-    //     sessionStorage.removeItem('username')
-    //     localStorage.removeItem('username')
-    //     navigate('/login')
-    // }
-
 
     return (
         <>
@@ -168,7 +166,6 @@ const NewLogin = () => {
                         </div>
                     </section>
                 </div>
-                // <Login/>
             )}
         </>
     );

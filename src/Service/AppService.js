@@ -71,6 +71,11 @@ class AppService {
         return axios.delete(BASE_REST_API_URL + '/admin/delete-account/' + username, header)
     }
 
+    deleteWorkflowByVersion(workflow, header){
+        // http://localhost:8080/admin/delete-workflow-by-version?version=v3
+        return axios.delete(BASE_REST_API_URL + '/admin/delete-workflow-by-version?version=' + workflow, header)
+    }
+
     getStageList(header) {
         // http://localhost:8080/admin/get-stage-data
         return axios.get(BASE_REST_API_URL + '/admin/get-stage-data', header)

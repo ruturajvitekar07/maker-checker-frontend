@@ -21,6 +21,7 @@ export default function User() {
     const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const stageName = "upload";
 
     const userInfo = () => {
         AppService.getUserInfo(username, header)
@@ -34,13 +35,13 @@ export default function User() {
             })
     }
 
-    // Get the workflow with version A1
-    const version = workflowData.workflows.find(workflow => workflow.version === workflow);
-    // Get the stage with role developer
-    const stageForDeveloper = version.stages[0].stage.find(stage => stage.role === role);
-    // Get the name of the stage
-    const stageName = stageForDeveloper.name;
-    console.log(stageName);
+    // // Get the workflow with version A1
+    // const version = workflowData.workflows.find(workflow => workflow.version === workflow);
+    // // Get the stage with role developer
+    // const stageForDeveloper = version.stages[0].stage.find(stage => stage.role === role);
+    // // Get the name of the stage
+    // const stageName = stageForDeveloper.name;
+    // console.log(stageName);
 
     const currentStatus = [
         { status: "Approved by developer" },
@@ -62,10 +63,25 @@ export default function User() {
     }
 
     const getPendigFileList = () => {
+        console.log(stageName);
         AppService.getFileList(workflow, stageName, header)
             .then((response) => {
                 console.log(response.data);
-                setFileDatas(response.data);
+                console.log('error');
+                // setFileDatas(response.data);
+                setFileDatas(null)
+            })
+            .catch((error) => {
+                console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error occurred',
+                    text: error.message,
+                    text: error.errorDetails,
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2000
+                });
             })
     }
 
@@ -83,39 +99,63 @@ export default function User() {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('workflowName', workflow);
-        if (file.type === 'application/pdf') {
-            try {
-                const response = await axios.post("http://localhost:8080/file/upload", formData,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorageToken}`
-                        }
+
+        if (file != null) {
+            if (file.type === 'application/pdf') {
+                // handle PDF file
+                try {
+                    const response = await axios.post("http://localhost:8080/file/upload", formData,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${localStorageToken}`
+                            }
+                        });
+                    console.log(response.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'PDF File uploaded successfully',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2500
                     });
-                console.log(response.data);
+                } catch (error) {
+                    toast.error(error);
+                }
+            } else if (file.type === 'text/csv') {
+                // handle CSV file
+                try {
+                    const response = await axios.post("http://localhost:8080/file/upload", formData,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${localStorageToken}`
+                            }
+                        });
+                    console.log(response.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'CSV file uploaded successfully',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                } catch (error) {
+                    toast.error(error);
+                }
+            } else {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'File uploaded successfully',
+                    icon: 'warning',
+                    title: 'Invalid file type',
                     toast: true,
                     position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 1500
+                    text: 'Please upload a PDF or CSV file',
+                    timer: 3000
                 });
-            } catch (error) {
-                toast.error(error);
             }
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid file type',
-                toast: true,
-                position: 'top-end',
-                text: 'Please upload only PDF files',
-                timer: 1500
-            });
         }
-
-
     };
 
     const ViewHistory = (namefile) => {
@@ -152,7 +192,7 @@ export default function User() {
         <div className="container">
             <div className='mt-3'>
                 <UserNavbar username={username} onClick={onLogout} />
-                <div className='row'>
+                <div className='row mt-3'>
                     <div className='col-4'>
                         <div className="mb-3">
                             <label htmlFor="formFile" className="form-label">Upload File</label>
@@ -173,7 +213,7 @@ export default function User() {
                         </tr>
                     </thead>
                     <tbody style={{ textAlign: 'center' }}>
-                        {
+                        {fileDatas ? (
                             fileDatas.map((file) =>
                                 <tr>
                                     <td>{file.fileName}</td>
@@ -188,7 +228,11 @@ export default function User() {
                                     </td>
                                 </tr>
                             )
-                        }
+                        ) : (
+                            <tr>
+                                <td colSpan="4">Something went wrong. Please try again later.</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

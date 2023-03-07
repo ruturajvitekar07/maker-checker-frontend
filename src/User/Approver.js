@@ -167,7 +167,6 @@ export default function Approver() {
             <div className='mt-5'>
                 <h2 className='text-center'>Approver Dashboard</h2>
                 <UserNavbar username={username} onClick={onLogout} />
-                <hr />
                 <div className='mt-4'>
                     <table className="table table-striped">
                         <thead>

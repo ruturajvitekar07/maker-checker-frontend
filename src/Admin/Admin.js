@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AppService from '../Service/AppService'
 import Swal from 'sweetalert2';
 import AdminNavbar from '../Navbars/AdminNavbar';
@@ -64,9 +64,7 @@ export default function Admin() {
       if (response.isConfirmed) {
         const deleteResponse = await AppService.deleteUserAccount(username, header);
         if (deleteResponse.status === 200) {
-          const updatedUsers = users.filter(user => user.username !== username);
-          console.log(updatedUsers);
-          setUsers(updatedUsers);
+          getUserList();
           Swal.fire({
             icon: 'success',
             title: 'Deleted!',
@@ -77,7 +75,16 @@ export default function Admin() {
             timer: 1500,
           });
         } else {
-          toast.warning('Failed to delete user');
+          // toast.warning('Failed to delete user');
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong! Failed to delete user',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          });
         }
       }
     } catch (error) {

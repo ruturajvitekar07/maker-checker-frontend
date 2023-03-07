@@ -190,7 +190,7 @@ export default function AddStage() {
                             <div className="form-group mb-2">
                                 <label className="form-label"> Next stage name : </label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     required
                                     placeholder="Enter next stage number"
                                     name="nextStage"

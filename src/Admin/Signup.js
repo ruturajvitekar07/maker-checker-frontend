@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import Swal from 'sweetalert2';
 import AppService from '../Service/AppService'
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function Signup() {
 
@@ -17,11 +17,26 @@ export default function Signup() {
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     const createUser = (event) => {
         event.preventDefault();
         const user = { firstName, lastName, email, role, mobileNumber, password };
-        if (user.firstName.length === 0 || user.lastName.length === 0 || user.email.length === 0 || user.role.length === 0 || user.password.length === 0 || user.mobileNumber.length === 0) {
-            toast.error("Enter information correctly", { autoClose: 1000 })
+        if (!firstName || !lastName || !email || !role || !password || !mobileNumber) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill out all the required fields.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+            return;
         }
         else {
             Swal.fire({
@@ -32,9 +47,8 @@ export default function Signup() {
                 confirmButtonText: 'Yes, Add it!',
                 cancelButtonText: 'No, cancel!',
             })
-                .then( async (response) => {
+                .then(async (response) => {
                     try {
-                        // const response = await axios.post('http://localhost:8080/admin/signup', user, header);
                         const response = await AppService.creteUser(user, header)
                         console.log('Signup successful!', response);
                         if (response.status === 201) {
@@ -56,23 +70,53 @@ export default function Signup() {
 
                             navigate('/adduser')
                         } else {
-                            throw new Error('Signup failed.');
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Signup failed.',
+                                icon: 'error',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
                         }
-                    } catch (error) {
+                    }
+                    catch (error) {
                         console.error('Error during signup:', error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Signup failed.',
-                            icon: 'error',
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
+                        if (error.response.status === 400) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'User with this email already exists.',
+                                icon: 'error',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Signup failed.',
+                                icon: 'error',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        }
                     }
                 }).catch((error) => {
-                    toast.error("Signup failed ", error , { autoClose: 1000 })
-                })
+                    console.error(error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Signup failed.',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                });
         }
     }
 
@@ -144,7 +188,7 @@ export default function Signup() {
                             </input>
                         </div>
 
-                        <div className="form-group mb-2">
+                        {/* <div className="form-group mb-2">
                             <label htmlFor='password' className="form-label"> Password : </label>
                             <input
                                 type="password"
@@ -157,6 +201,33 @@ export default function Signup() {
                                 onChange={(e) => setPassword(e.target.value)}
                             >
                             </input>
+                        </div> */}
+                        <div className="form-group mb-2">
+                            <label htmlFor='password' className="form-label"> Password : </label>
+                            <div className="input-group">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    required
+                                    placeholder="Enter password"
+                                    id='password'
+                                    name="password"
+                                    className="form-control"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                    onClick={togglePasswordVisibility}
+                                    style={{
+                                        borderTopRightRadius: '0.25rem',
+                                        borderBottomRightRadius: '0.25rem',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="form-group mb-2">

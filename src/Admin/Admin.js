@@ -14,16 +14,62 @@ export default function Admin() {
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
+  // const getUserList = () => {
+  //   AppService.getUserList(header)
+  //     .then((response) => {
+  //       setUsers(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       toast.error("Failed to fetch user data");
+  //     });
+  // }
+
   const getUserList = () => {
     AppService.getUserList(header)
       .then((response) => {
-        setUsers(response.data);
+        if (response.status === 200) {
+          console.log(response.data);
+          const sortedData = response.data.sort((a, b) => {
+            if (a.firstName < b.firstName) {
+              return -1;
+            } else if (a.firstName > b.firstName) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          setUsers(sortedData);
+        } else if (response.status === 400) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to fetch user data',
+            icon: 'Warning',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
+          });
+        }
       })
       .catch((error) => {
         console.error(error);
-        toast.error("Failed to fetch user data");
+        if (error.message === 'Failed to fetch user data') {
+          toast.error('Failed to fetch user data');
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to fetch user data',
+            icon: 'Error',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
+          });
+        } else {
+          toast.error('An error occurred', { autoClose: 1500 });
+        }
       });
-  }
+  };
 
   const deleteFile = () => {
     AppService.deleteStageFile(header)
@@ -38,14 +84,29 @@ export default function Admin() {
             showConfirmButton: false,
             timer: 1000
           });
-        } else {
+        } else if (response.status === 400) {
+          // throw new Error('Unable to delete file');
           Swal.fire({
-            icon: 'error',
             title: 'Unable to delete file',
-            text: 'Please try again later.'
+            text: 'Please try again later.',
+            icon: 'Warning',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000
           });
+        } else {
+          throw new Error('An error occurred');
         }
       })
+      .catch((error) => {
+        console.error(error);
+        if (error.message === 'Unable to delete file') {
+          toast.error('Unable to delete file', { autoClose: 1500 });
+        } else {
+          toast.error('An error occurred', { autoClose: 1500 });
+        }
+      });
   }
 
 
@@ -77,7 +138,7 @@ export default function Admin() {
         } else {
           // toast.warning('Failed to delete user');
           Swal.fire({
-            icon: 'error',
+            icon: 'warning',
             title: 'Oops...',
             text: 'Something went wrong! Failed to delete user',
             toast: true,
@@ -89,7 +150,19 @@ export default function Admin() {
       }
     } catch (error) {
       console.error(error);
-      toast.warning(error);
+      if (error.response && error.response.status === 400) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Bad Request! Failed to delete user',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        toast.warning(error.message, { autoClose: 1500 });
+      }
     }
   };
 
@@ -107,7 +180,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="container">
+    <div className="">
       <div className="col">
         <div className='mt-3'>
           <AdminNavbar username={username} onClick={onLogout} />

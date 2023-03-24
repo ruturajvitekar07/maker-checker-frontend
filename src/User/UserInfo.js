@@ -98,10 +98,10 @@ export default function UserInfo() {
                                 >
                                 </input>
                             </div>
-
+{/* 
                             <div>
                                 <button className='btn btn-danger' onClick={() => navigate("/user")}>Back</button>
-                            </div>
+                            </div> */}
                         </form>
                     </div>
                 </div>

@@ -15,11 +15,35 @@ import UserInfo from './User/UserInfo';
 import History from './Admin/History';
 import Workflow from './Admin/Workflow';
 import NewFooter from './Navbars/NewFooter';
+import { useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 function App() {
+
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      const token = localStorage.getItem('access_token');
+      const tokenExpiration = localStorage.getItem('expires_in');
+      const now = new Date().getTime() / 1000;
+
+      if (token && tokenExpiration && now > tokenExpiration) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('expires_in');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Session Expired',
+          text: 'Please log in again.',
+        }).then(() => {
+          window.location.href = '/login';
+        });
+      }
+    };
+    checkTokenExpiration();
+  }, []);
+
   return (
     <React.Fragment>
-      <div className="container">
+      <div className="">
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -35,9 +59,9 @@ function App() {
             <Route path='/login' element={<NewLogin />} />
           </Routes>
         </BrowserRouter>
-        <ToastContainer />
-        <NewFooter></NewFooter>
+        <ToastContainer />     
       </div>
+      <NewFooter></NewFooter>
     </React.Fragment>
   );
 }

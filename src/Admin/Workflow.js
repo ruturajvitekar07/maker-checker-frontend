@@ -20,13 +20,34 @@ export default function Workflow() {
         AppService.getWorkflowList(header)
             .then((response) => {
                 console.log(response.data);
-                setWorkflows(response.data);
+                if (response.status === 200) {
+                    console.log(response.data);
+                    setWorkflows(response.data);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Error',
+                        toast: true,
+                        position: 'top-end',
+                        text: 'Failed to get workflow list, Please refresh',
+                        timer: 3000
+                    });
+                }
             })
             .catch((error) => {
                 console.log(error);
-                toast.warning("Error retrieving data of workflows");
+                if (error.response && error.response.status === 400) {
+                    Swal.fire({
+                        icon: 'Error',
+                        title: 'Error',
+                        toast: true,
+                        position: 'top-end',
+                        text: 'Unable to retrieve workflow list',
+                        timer: 3000
+                    });
+                }
             });
-    }
+    };
 
     const addWorkflow = (event) => {
         const workflow = { version };
@@ -57,12 +78,34 @@ export default function Workflow() {
                                 setWorkflows(newWorkflows);
                                 setVersion('');
                             } else {
-                                toast.show("Unable to add workflow. Please try again later.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'Unable to add workflow. Please try again later.',
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
                             }
                         })
                         .catch((error) => {
                             console.error(error);
-                            toast.show("An error occurred. Please try again later.");
+                            if (error.response && error.response.status === 400) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'Bad request. Please check your input.',
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            } else {
+                                console.error(error);
+                                toast.show("An error occurred. Please try again later.");
+                            }
+
                         });
                 }
             })
@@ -106,7 +149,19 @@ export default function Workflow() {
             }
         } catch (error) {
             console.error(error);
-            toast.warning(error);
+            if (error.response && error.response.status === 400) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Bad Request! Failed to delete workflow',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            } else {
+                toast.warning(error);
+            }
         }
     };
 
@@ -165,7 +220,7 @@ export default function Workflow() {
                                     <th className="table-primary">Action</th>
                                 </tr>
                             </thead>
-                            <tbody style={{ textAlign: 'center' }}>
+                            {/* <tbody style={{ textAlign: 'center' }}>
                                 {workflows.map((work) => (
                                     <tr key={work}>
                                         <td>{work}</td>
@@ -174,6 +229,22 @@ export default function Workflow() {
                                         </td>
                                     </tr>
                                 ))}
+                            </tbody> */}
+                            <tbody style={{ textAlign: 'center' }}>
+                                {workflows.length > 0 ? (
+                                    workflows.map((work) => (
+                                        <tr key={work}>
+                                            <td>{work}</td>
+                                            <td>
+                                                <button className='btn btn-danger col-5' onClick={(e) => deleteWorkflow(work)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="2">No workflows present. Please add one.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     )}

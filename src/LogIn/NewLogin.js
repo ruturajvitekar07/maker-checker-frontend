@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
 import styles from '../LogIn/myStyle.module.css';
 import Navbars from "../Navbars/Navbars";
 import Swal from 'sweetalert2';
+import { D9862 } from '../Constants/constants'
 
 const NewLogin = () => {
 
@@ -15,8 +15,6 @@ const NewLogin = () => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // const [workflow, setWorkflow] = useState([])
-
 
     //==================Login====================
 
@@ -24,20 +22,46 @@ const NewLogin = () => {
         e.preventDefault();
         const userCredentials = { username, password }
         if (username.length == 0) {
-            toast.warning('Please Enter username', { autoClose: 1000 })
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error!',
+                text: 'Please enter your username.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            });
         } else if (password.length == 0) {
-            toast.warning('Please Enter Password', { autoClose: 1000 })
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error!',
+                text: 'Please enter your password.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            });
         } else {
             AppService.signin(userCredentials)
                 .then((response) => {
                     if (response.status === 200) {
-                        toast.success('Welcome to my Application', { autoClose: 1000 })
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Welcome back to Application!',
+                            text: 'You are now logged in.',
+                            toast: true,
+                            position: 'top-end',
+                            timer: 1500
+                        });
                         const access_token = response.data.access_token
                         const username = response.data.username
+                        const expires_in = response.data.expires_in
                         sessionStorage.setItem("access_token", access_token);
                         sessionStorage.setItem("username", username)
+                        sessionStorage.setItem("expires_in", expires_in)
                         sessionStorage['access_token'] = access_token
                         sessionStorage['username'] = username
+                        sessionStorage['expires_in'] = expires_in
                         if (username == "ADMIN")
                             navigate('/admin')
                         else if (username !== null) {
@@ -47,25 +71,30 @@ const NewLogin = () => {
                                 .then((response) => {
                                     if (response.status === 200) {
                                         console.log(response.data.role);
-                                        // if (response.data.role === "developer") {
                                         setIsLoggedIn(true);
                                         console.log(response.data.role);
                                         setRole(response.data.role);
-                                        // }
-                                        // else {
-                                        //     setIsLoggedIn(true);
-                                        //     console.log(response.data.role);
-                                        //     setRole(response.data.role);
-                                        // }
-                                    } else {
+                                    } else if (response.status === 400) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: 'Bad request. Please check your input.',
+                                            toast: true,
+                                            position: 'top-end',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        });
+                                    }
+                                    else {
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Oops...',
                                             text: 'Something went wrong!',
                                             toast: true,
+                                            position: 'top-end',
                                             footer: 'Please try again later',
                                             timer: 1500
-                                        })
+                                        });
                                     }
                                 })
 
@@ -74,7 +103,15 @@ const NewLogin = () => {
                 })
                 .catch((error) => {
                     console.error(error);
-                    toast.error('Invalid name or password', { autoClose: 1000 })
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Invalid Username or Password',
+                        toast: true,
+                        position: 'top-end',
+                        footer: 'Please try again later',
+                        timer: 1500
+                    });
                 })
         }
     };
@@ -83,7 +120,7 @@ const NewLogin = () => {
         <>
             {isLoggedIn ? (
                 <>
-                    {role === 'developer' ? (
+                    {role === D9862 ? (
                         navigate("/user")
                     ) : (
                         navigate("/approver")
@@ -93,7 +130,7 @@ const NewLogin = () => {
                 <div className='mt-1'>
                     <Navbars />
                     <section className={styles.backgroundRadialGradient}>
-                        <div className="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+                        <div className="container px-4 py-5 px-md-5 text-center text-lg-start">
                             <div className="row gx-lg-5 align-items-center mb-5">
                                 <div className="col-lg-6 mb-5 mb-lg-0" style={{ zIndex: 10 }}>
                                     <h1 className="my-5 display-5 fw-bold ls-tight" style={{ color: 'hsl(218, 81%, 95%)' }}>

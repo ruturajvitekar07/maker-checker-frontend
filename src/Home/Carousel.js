@@ -26,7 +26,7 @@ const Carousel = () => {
     <Slider {...settings}>
       {slides.map(slide => (
         <div key={slide.id} style={{ display: 'flex', justifyContent: 'center' }}>
-          <img src={slide.image} alt={`Slide ${slide.id}`} width={1200} height={600} />
+          <img src={slide.image} alt={`Slide ${slide.id}`} width={1300} height={600} />
         </div>
       ))}
     </Slider>

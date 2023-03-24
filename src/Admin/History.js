@@ -1,19 +1,46 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppService from '../Service/AppService'
+import Swal from 'sweetalert2';
 
 export default function History() {
   const [history, setHistory] = useState([])
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
+
   const getHistory = () => {
     AppService.getAllHistory(header)
       .then((response) => {
         console.log(response.data);
-        setHistory(response.data)
+        if (response.status === 200) {
+          setHistory(response.data);
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Error',
+            toast: true,
+            position: 'top-end',
+            text: 'Failed to get history data',
+            timer: 3000
+          });
+        }
       })
-  }
+      .catch((error) => {
+        console.log(error);
+        if (error.response && error.response.status === 400) {
+          Swal('Error', 'Unable to retrieve history data', 'error');
+          Swal.fire({
+            icon: 'Error',
+            title: 'Error',
+            toast: true,
+            position: 'top-end',
+            text: 'Unable to retrieve history data',
+            timer: 3000
+          });
+        }
+      });
+  };
 
   useEffect(() => {
     getHistory()

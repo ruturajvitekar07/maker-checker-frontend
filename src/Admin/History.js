@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import AppService from '../Service/AppService'
+import AdminAppService from '../Service/AdminAppService'
 import Swal from 'sweetalert2';
 
 export default function History() {
@@ -10,9 +10,8 @@ export default function History() {
 
 
   const getHistory = () => {
-    AppService.getAllHistory(header)
+    AdminAppService.getAllHistory(header)
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
           setHistory(response.data);
         } else {
@@ -27,9 +26,7 @@ export default function History() {
         }
       })
       .catch((error) => {
-        console.log(error);
         if (error.response && error.response.status === 400) {
-          Swal('Error', 'Unable to retrieve history data', 'error');
           Swal.fire({
             icon: 'Error',
             title: 'Error',

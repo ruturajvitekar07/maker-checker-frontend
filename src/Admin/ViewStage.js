@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react'
 import React from 'react'
 import 'react-toastify/dist/ReactToastify.css';
-import AppService from '../Service/AppService';
+import AdminAppService from '../Service/AdminAppService';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 export default function ViewStage() {
 
-  const [workFlows, setWorkFlows] = useState();
+  const [workFlows, setWorkFlows] = useState(null);
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
   const getStages = () => {
-    AppService.getAllWorkflowsData(header)
+    AdminAppService.getAllWorkflowsData(header)
       .then((res) => {
-        console.log(res.data);
         if (res.status === 200) {
           setWorkFlows(res.data);
         } else {
@@ -31,7 +30,6 @@ export default function ViewStage() {
         }
       })
       .catch((error) => {
-        console.log(error);
         if (error.response && error.response.status === 400) {
           Swal.fire({
             icon: 'error',
@@ -55,16 +53,13 @@ export default function ViewStage() {
   };
 
   const workflowList = () => {
-    AppService.getWorkflowList(header)
+    AdminAppService.getWorkflowList(header)
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
-          console.log(response.data);
           const sortedData = response.data.sort((a, b) =>
             a.localeCompare(b)
           );
           setWorkflows1(sortedData);
-          // setWorkflows1(response.data);
         } else {
           Swal.fire({
             icon: 'warning',
@@ -77,7 +72,6 @@ export default function ViewStage() {
         }
       })
       .catch((error) => {
-        console.log(error);
         if (error.response && error.response.status === 400) {
           Swal.fire({
             icon: 'Error',
@@ -112,11 +106,6 @@ export default function ViewStage() {
           <label htmlFor='drop' className='mb-2'>Choose Workflow : </label>
           <select className="form-select" name='drop' value={selectedWorkflow}
             onChange={(event) => { setSelectedWorkflow(event.target.value); }}>
-            {/* <select className="form-select" name='drop' value={selectedWorkflow} onChange={(event) => {
-            setSelectedWorkflow(event.target.value);
-            const selectedWorkflowStages = workflows1.find((workflow) => workflow === event.target.value)?.stages?.[0]?.stage || [];
-            setWorkFlows([{ version: event.target.value, stages: [{ stage: selectedWorkflowStages }] }]);
-          }}> */}
             <option defaultValue={"Select a workflow"} disabled>Select a workflow</option>
             {workflows1.map((work) => (
               <option value={work} key={work}>

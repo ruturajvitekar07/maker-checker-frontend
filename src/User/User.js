@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
-import AppService from '../Service/AppService'
-import axios from "axios";
+import UserAppService from '../Service/UserAppService'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import UserNavbar from '../Navbars/UserNavbar';
 import Swal from 'sweetalert2';
+import { UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants';
 
 export default function User() {
 
@@ -15,32 +13,108 @@ export default function User() {
     const [fileDatas, setFileDatas] = useState([])
     const [workflowName, setWorkflowName] = useState('')
     const [stagename, setStagename] = useState('')
-    const [workflowname, setWorkflowname] = useState('')
+    const [workflowname, setWorkflowname] = useState('V2')
+    const [event, setEvent] = useState('')
     const [currentStatus, setCurrentStatus] = useState([])
-    // const [role, setRole] = useState('')
     const [file, setFile] = useState(null);
     const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
-    const UserWorkflowList = () => {
-        AppService.getUserWorkflowList(header)
+    // const UserWorkflowList = () => {
+    //     UserAppService.getUserWorkflowList(header)
+    //         .then((response) => {
+    //             if (response.status === 200) {
+    //                 console.log(response.data);
+    //                 const data = response.data;
+    //                 const stage = data[0]?.stages[0]?.stage[0];
+    //                 const ver = data[3]?.version;
+    //                 console.log(ver);
+    //                 setWorkflowname(ver);
+    //                 setStagename(stage.name);
+    //             } else {
+    //                 Swal.fire({
+    //                     icon: 'error',
+    //                     title: 'Error occurred',
+    //                     text: 'Failed to get workflow information',
+    //                     toast: true,
+    //                     position: 'top-end',
+    //                     timer: 4000
+    //                 });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'Error occurred',
+    //                 text: error.message || 'Failed to load workflow details',
+    //                 toast: true,
+    //                 position: 'top-end',
+    //                 timer: 4000
+    //             });
+    //         });
+    // }
+
+    // const FileList = () => {
+    //     if (workflowname && stagename) {
+    //         UserAppService.getFileList(workflowname, stagename, header)
+    //             .then((response) => {
+    //                 if (response.status === 200) {
+    //                     const sortedData = response.data.sort((a, b) =>
+    //                         a.fileName.localeCompare(b.fileName)
+    //                     );
+    //                     setFileDatas(sortedData);
+    //                 } else {
+    //                     console.log("Error occurred");
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Error occurred',
+    //                         text: 'Failed to fetch file list.',
+    //                         toast: true,
+    //                         position: 'top-end',
+    //                         timer: 4000
+    //                     });
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.log(error);
+    //                 if (error.response && error.response.status === 400) {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Error occurred',
+    //                         text: error.response.data.message || 'Please try again later',
+    //                         toast: true,
+    //                         position: 'top-end',
+    //                         timer: 4000
+    //                     });
+    //                 } else {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Error occurred',
+    //                         text: error.message || 'Please try again later',
+    //                         toast: true,
+    //                         position: 'top-end',
+    //                         timer: 4000
+    //                     });
+    //                 }
+    //             });
+    //     }
+    // }
+
+    const getPendingFilesList = () => {
+        UserAppService.getPendingFilesList(header)
             .then((response) => {
                 if (response.status === 200) {
-                    // console.log(response.data);
-                    const data = response.data;
-                    const stage = data[0]?.stages[0]?.stage[0];
-                    const ver = data[0]?.version;
-                    // console.log(ver);
-                    setWorkflowname(ver);
-                    // console.log("workflow set successfully");
-                    // console.log(stage.name);
-                    setStagename(stage.name);
+                    const sortedData = response.data.sort((a, b) =>
+                        a.fileName.localeCompare(b.fileName)
+                    );
+                    setFileDatas(sortedData);
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error occurred',
-                        text: 'Failed to get workflow information',
+                        text: 'Failed to fetch file list.',
                         toast: true,
                         position: 'top-end',
                         timer: 4000
@@ -48,92 +122,43 @@ export default function User() {
                 }
             })
             .catch((error) => {
-                console.log(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error occurred',
-                    text: error.message || 'Failed to load workflow details',
-                    toast: true,
-                    position: 'top-end',
-                    timer: 4000
-                });
+                if (error.response.status === 400) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error occurred',
+                        text: error.response.data.message || 'Please try again later',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 1500
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error occurred',
+                        text: error.message || 'Please try again later',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 1500
+                    });
+                }
             });
     }
 
-    const FileList = () => {
-        // console.log(workflowname);
-        // console.log(stagename);
-        // console.log(header);
-        if (workflowname && stagename) {
-            AppService.getFileList(workflowname, stagename, header)
-                .then((response) => {
-                    if (response.status === 200) {
-                        console.log(response.data);
-                        const sortedData = response.data.sort((a, b) => {
-                            if (a.fileName < b.fileName) {
-                                return -1;
-                            } else if (a.fileName > b.fileName) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        });
-                        console.log(sortedData);
-                        setFileDatas(sortedData);
-                    } else {
-                        console.log("Error occurred");
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error occurred',
-                            text: 'Failed to fetch file list.',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 4000
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (error.response && error.response.status === 400) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error occurred',
-                            text: error.response.data.message || 'Please try again later',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 4000
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error occurred',
-                            text: error.message || 'Please try again later',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 4000
-                        });
-                    }
-                });
-        }
-    }
-
     useEffect(() => {
-        UserWorkflowList();
-        FileList();
+        getPendingFilesList();
+        // UserWorkflowList();
+        // FileList();
     })
 
     const handleFileInput = (event) => {
-        console.log(workflowname);
         // UserWorkflowList();
         setFile(event.target.files[0]);
     };
 
     const ViewHistory = async (filename) => {
-        console.log(filename);
         try {
-            const response = await AppService.getFileHistory(filename, header);
+            const response = await UserAppService.getFileHistory(filename, header);
             if (response.status === 200) {
-                console.log(response.data);
                 setCurrentStatus(response.data);
             } else {
                 console.log("Error occurred");
@@ -172,30 +197,32 @@ export default function User() {
         }
     };
 
-    const handleSubmitPdf = async (event) => {
-        event.preventDefault();
-        UserWorkflowList()
+    const handleSubmitPdf = async (e) => {
+        e.preventDefault();
+        console.log("pdf event : ", event);
         const formData = new FormData();
         formData.append('file', file);
-        setWorkflowName(workflowname);
-        formData.append('workflowName', workflowName);
+        formData.append('event', event);
+        // setWorkflowName(workflowname);
+        // formData.append('workflowName', workflowName);
         formData.append('localStorageToken', localStorageToken);
         if (file != null) {
             if (file.type === 'application/pdf') {
                 // handle PDF file
                 try {
-                    const response = await axios.post('http://localhost:8080/file/upload', formData, {
-                        headers: {
-                            Authorization: `Bearer ${localStorageToken}`,
-                            'Content-Type': 'multipart/form-data',
-                        }
-                    });
+                    // const response = await axios.post('http://localhost:8080/file/upload', formData, {
+                    //     headers: {
+                    //         Authorization: `Bearer ${localStorageToken}`,
+                    //         'Content-Type': 'multipart/form-data',
+                    //     }
+                    // });
+                    const response = await UserAppService.uploadSpecificFile(formData, header);
                     console.log(response.data);
                     if (response.status === 200) {
                         Swal.fire({
                             icon: "success",
                             title: "Success!",
-                            text: "PDF File uploaded successfully" & response.message,
+                            text: "PDF File uploaded successfully",
                             toast: true,
                             position: "top-end",
                             footer: response.message,
@@ -204,9 +231,8 @@ export default function User() {
                         });
                     }
                     setFile('')
-                    FileList();
+                    getPendingFilesList();
                 } catch (error) {
-                    console.log(error);
                     if (error.response && error.response.status === 400) {
                         Swal.fire({
                             icon: 'error',
@@ -251,27 +277,29 @@ export default function User() {
         }
     };
 
-    const handleSubmitCsv = async (event) => {
-        console.log("csv");
-        event.preventDefault();
+    const handleSubmitCsv = async (e) => {
+        e.preventDefault();
+        console.log("csv event : ", event);
         const formData = new FormData();
         formData.append('file', file);
-        setWorkflowName(workflowname);
-        formData.append('workflowName', workflowName);
-        console.log('1 ', workflowName);
+        formData.append('event', event);
+        // setWorkflowName(workflowname);
+        // formData.append('workflowName', workflowName);
+        // console.log('1 ', workflowName);
+        formData.append('localStorageToken', localStorageToken);
         if (file != null) {
             if (file.type === 'text/csv') {
                 // handle CSV file
                 try {
-                    const response = await axios.post("http://localhost:8080/file/upload", formData,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${localStorageToken}`,
-                                'Content-Type': 'multipart/form-data',
-                            }
-                        });
-                    console.log(response.data);
-                    if (response.status === 200) {
+                    // const response = await axios.post("http://localhost:8080/file/upload", formData,
+                    //     {
+                    //         headers: {
+                    //             Authorization: `Bearer ${localStorageToken}`,
+                    //             'Content-Type': 'multipart/form-data',
+                    //         }
+                    //     });
+                    const response = await UserAppService.uploadSpecificFile(formData, header);
+                    console.log(response.data); if (response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
@@ -283,7 +311,7 @@ export default function User() {
                         });
                     }
                     setFile('')
-                    FileList();
+                    getPendingFilesList();
                 } catch (error) {
                     console.log(error);
                     if (error.response && error.response.status === 400) {
@@ -363,8 +391,8 @@ export default function User() {
                                 <label htmlFor="formFile" className="form-label">Upload File</label>
                                 <input className="form-control" type="file" onChange={handleFileInput} id="formFile" />
                                 <div className='mt-2' style={{ display: 'flex', gap: '16px' }}>
-                                    <button className='btn btn-success' onClick={handleSubmitPdf}>Upload PDF</button>
-                                    <button className='btn btn-success' onClick={handleSubmitCsv}>Upload CSV</button>
+                                    <button className='btn btn-success' onClick={handleSubmitPdf} >Upload PDF</button>
+                                    <button className='btn btn-success' onClick={handleSubmitCsv} >Upload CSV</button>
                                 </div>
                             </div>
                         </div>

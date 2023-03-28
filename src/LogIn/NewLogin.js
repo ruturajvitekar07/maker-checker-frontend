@@ -70,9 +70,7 @@ const NewLogin = () => {
                             AppService.getUserInfo(header)
                                 .then((response) => {
                                     if (response.status === 200) {
-                                        console.log(response.data.role);
                                         setIsLoggedIn(true);
-                                        console.log(response.data.role);
                                         setRole(response.data.role);
                                     } else if (response.status === 400) {
                                         Swal.fire({
@@ -102,7 +100,6 @@ const NewLogin = () => {
                     }
                 })
                 .catch((error) => {
-                    console.error(error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',

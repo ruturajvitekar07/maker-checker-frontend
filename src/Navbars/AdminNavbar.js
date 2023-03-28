@@ -10,19 +10,19 @@ export default function AdminNavbar(props) {
                 </div>
                 <ul className="navbar-nav mb-2 mb-lg-0">
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/history">History</a>
+                        <a className="nav-link" href="/stagelist">View Stages</a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/stagelist">View Stages</a>
+                        <a className="nav-link" href="/workflows">View Workflows</a>
                     </li>
                     <li className="nav-item px-2">
                         <a className="nav-link" href="/workflow">Add Workflow</a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/addstage">Add Stage</a>
+                        <a className="nav-link" href="/adduser">Add User</a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/adduser">Add User</a>
+                        <a className="nav-link" href="/history">History</a>
                     </li>
                     <li className="nav-item px-2">
                         <a className="nav-link" onClick={props.onClick}>Logout</a>

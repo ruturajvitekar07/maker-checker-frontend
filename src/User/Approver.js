@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import AppService from '../Service/AppService';
+import UserAppService from '../Service/UserAppService';
 import { useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -27,26 +27,20 @@ export default function Approver() {
     const handleShow = (file1) => {
         setShow(true);
         setStatus(APPROVED);
-        console.log(file1);
         setFileName(file1);
-        // console.log("status : " + event.target.name);
     }
     const [show1, setShow1] = useState(false);
     const handleClose1 = () => setShow1(false);
     const handleShow1 = (file1) => {
         setShow1(true);
         setStatus(DECLINED);
-        console.log(file1);
         setFileName(file1);
-        // console.log("status : " + event.target.name);
     }
 
     const getPendigFileLists = () => {
-        AppService.getUserInfo(header)
+        UserAppService.getUserInfo(header)
             .then((response) => {
                 if (response.status === 200) {
-                    // console.log(response.data);
-                    // console.log(response.data.role);
                     setRole(response.data.role);
                 } else if (response.status === 400) {
                     Swal.fire({
@@ -80,17 +74,13 @@ export default function Approver() {
                     timer: 1500
                 });
             });
-        AppService.getUserWorkflowList(header)
+        UserAppService.getUserWorkflowList(header)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data);
                     const data = response.data;
                     const stage = data[0]?.stages[0]?.stage[0];
                     const ver = data[0]?.version;
-                    // console.log(ver);
                     setWorkflowName(ver)
-                    console.log(stage.name);
-                    console.log(stage.previousStage);
                     setStageName(stage.previousStage);
                     pendingFiles(ver, stage.previousStage);
                 } else {
@@ -117,7 +107,7 @@ export default function Approver() {
     }
 
     const pendingFiles = (v1, stageName1) => {
-        AppService.getFileList(v1, stageName1, header)
+        UserAppService.getFileList(v1, stageName1, header)
             .then((response) => {
                 if (response.status === 200) {
                     const sortedData = response.data.sort((a, b) => {
@@ -154,15 +144,9 @@ export default function Approver() {
     }
 
     const fileDecision = (fileName) => {
-        console.log(role);
-        console.log(fileName);
-        console.log(status);
-        console.log(comment);
-        console.log(workflowName);
         const decision = { fileName, role, status, workflowName, comment }
-        AppService.fileApproveDecline(decision, header)
+        UserAppService.fileApproveDecline(decision, header)
             .then((response) => {
-                console.log(response.data);
                 if (response.status === 200) {
                     if (status === APPROVED) {
                         Swal.fire({
@@ -198,7 +182,6 @@ export default function Approver() {
                 }
             })
             .catch((error) => {
-                console.log(error);
                 if (error.response && error.response.status === 400) {
                     Swal.fire({
                         icon: 'error',
@@ -222,14 +205,9 @@ export default function Approver() {
     }
 
     const downloadFile = async (filename) => {
-        console.log(username);
-        console.log(role);
-        console.log(stageName);
-        console.log(filename);
-        console.log(workflowName);
         const fileObj = { workflowName, stageName, filename };
         try {
-            const response = await AppService.downloadFile(fileObj, header);
+            const response = await UserAppService.downloadFile(fileObj, header);
             if (response.status === 200) {
                 let url = window.URL.createObjectURL(new Blob([response.data]));
                 let link = document.createElement('a');

@@ -17,6 +17,7 @@ import Workflow from './Admin/Workflow';
 import NewFooter from './Navbars/NewFooter';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
+import Workflows from './Admin/Workflows';
 
 function App() {
 
@@ -49,7 +50,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/adduser" element={<Signup />} />
-            <Route path="/addstage" element={<AddStage />} />
+            <Route path="/addstage/:work" element={<AddStage />} />
             <Route path="/stagelist" element={<ViewStage />} />
             <Route path="/user" element={<User />} />
             <Route path='/approver' element={<Approver />} />
@@ -57,6 +58,7 @@ function App() {
             <Route path='/history' element={<History />} />
             <Route path='/workflow' element={<Workflow />} />
             <Route path='/login' element={<NewLogin />} />
+            <Route path='/workflows' element={<Workflows />} />
           </Routes>
         </BrowserRouter>
         <ToastContainer />     

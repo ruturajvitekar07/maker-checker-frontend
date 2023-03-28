@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
-import AppService from '../Service/AppService'
+import AdminAppService from '../Service/AdminAppService'
 import Swal from 'sweetalert2';
 import AdminNavbar from '../Navbars/AdminNavbar';
 
@@ -14,22 +14,10 @@ export default function Admin() {
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
-  // const getUserList = () => {
-  //   AppService.getUserList(header)
-  //     .then((response) => {
-  //       setUsers(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //       toast.error("Failed to fetch user data");
-  //     });
-  // }
-
   const getUserList = () => {
-    AppService.getUserList(header)
+    AdminAppService.getUserList(header)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data);
           const sortedData = response.data.sort((a, b) => {
             if (a.firstName < b.firstName) {
               return -1;
@@ -53,9 +41,7 @@ export default function Admin() {
         }
       })
       .catch((error) => {
-        console.error(error);
         if (error.message === 'Failed to fetch user data') {
-          toast.error('Failed to fetch user data');
           Swal.fire({
             title: 'Error',
             text: 'Failed to fetch user data',
@@ -72,9 +58,8 @@ export default function Admin() {
   };
 
   const deleteFile = () => {
-    AppService.deleteStageFile(header)
+    AdminAppService.deleteStageFile(header)
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
           Swal.fire({
             icon: 'success',
@@ -85,7 +70,6 @@ export default function Admin() {
             timer: 1000
           });
         } else if (response.status === 400) {
-          // throw new Error('Unable to delete file');
           Swal.fire({
             title: 'Unable to delete file',
             text: 'Please try again later.',
@@ -100,7 +84,6 @@ export default function Admin() {
         }
       })
       .catch((error) => {
-        console.error(error);
         if (error.message === 'Unable to delete file') {
           toast.error('Unable to delete file', { autoClose: 1500 });
         } else {
@@ -111,7 +94,6 @@ export default function Admin() {
 
 
   const deleteUser = async (username) => {
-    console.log(username);
     try {
       const response = await Swal.fire({
         icon: 'warning',
@@ -123,7 +105,7 @@ export default function Admin() {
       });
 
       if (response.isConfirmed) {
-        const deleteResponse = await AppService.deleteUserAccount(username, header);
+        const deleteResponse = await AdminAppService.deleteUserAccount(username, header);
         if (deleteResponse.status === 200) {
           getUserList();
           Swal.fire({
@@ -136,7 +118,6 @@ export default function Admin() {
             timer: 1500,
           });
         } else {
-          // toast.warning('Failed to delete user');
           Swal.fire({
             icon: 'warning',
             title: 'Oops...',
@@ -149,7 +130,6 @@ export default function Admin() {
         }
       }
     } catch (error) {
-      console.error(error);
       if (error.response && error.response.status === 400) {
         Swal.fire({
           icon: 'error',

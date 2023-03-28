@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import AppService from '../Service/AppService'
+import UserAppService from '../Service/UserAppService'
 
 export default function UserInfo() {
 
@@ -16,7 +16,7 @@ export default function UserInfo() {
     useEffect(() => {
         const localStorageToken = sessionStorage.getItem("access_token");
         const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-        AppService.getUserInfo(header)
+        UserAppService.getUserInfo(header)
             .then((response) => {
                 if (response.status === 200) {
                     console.log(response.data);

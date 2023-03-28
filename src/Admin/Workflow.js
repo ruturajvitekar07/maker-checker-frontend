@@ -1,9 +1,8 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import AppService from '../Service/AppService'
+import AdminAppService from '../Service/AdminAppService'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,16 +11,13 @@ export default function Workflow() {
     const [version, setVersion] = useState('')
     const [workflows, setWorkflows] = useState([])
     const [showTable, setShowTable] = useState(false);
-    const navigate = useNavigate()
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
     const workflowList = () => {
-        AppService.getWorkflowList(header)
+        AdminAppService.getWorkflowList(header)
             .then((response) => {
-                console.log(response.data);
                 if (response.status === 200) {
-                    console.log(response.data);
                     setWorkflows(response.data);
                 } else {
                     Swal.fire({
@@ -35,7 +31,6 @@ export default function Workflow() {
                 }
             })
             .catch((error) => {
-                console.log(error);
                 if (error.response && error.response.status === 400) {
                     Swal.fire({
                         icon: 'Error',
@@ -62,7 +57,7 @@ export default function Workflow() {
         })
             .then((response) => {
                 if (response.value) {
-                    AppService.createWorkflow(workflow, header)
+                    AdminAppService.createWorkflow(workflow, header)
                         .then((response) => {
                             if (response.status === 200) {
                                 Swal.fire({
@@ -90,7 +85,6 @@ export default function Workflow() {
                             }
                         })
                         .catch((error) => {
-                            console.error(error);
                             if (error.response && error.response.status === 400) {
                                 Swal.fire({
                                     icon: 'error',
@@ -102,7 +96,6 @@ export default function Workflow() {
                                     timer: 2000
                                 });
                             } else {
-                                console.error(error);
                                 toast.show("An error occurred. Please try again later.");
                             }
 
@@ -123,7 +116,7 @@ export default function Workflow() {
             });
 
             if (response.isConfirmed) {
-                const deleteResponse = await AppService.deleteWorkflowByVersion(workflow, header);
+                const deleteResponse = await AdminAppService.deleteWorkflowByVersion(workflow, header);
                 if (deleteResponse.status === 200) {
                     workflowList();
                     Swal.fire({
@@ -148,7 +141,6 @@ export default function Workflow() {
                 }
             }
         } catch (error) {
-            console.error(error);
             if (error.response && error.response.status === 400) {
                 Swal.fire({
                     icon: 'error',
@@ -220,16 +212,6 @@ export default function Workflow() {
                                     <th className="table-primary">Action</th>
                                 </tr>
                             </thead>
-                            {/* <tbody style={{ textAlign: 'center' }}>
-                                {workflows.map((work) => (
-                                    <tr key={work}>
-                                        <td>{work}</td>
-                                        <td>
-                                            <button className='btn btn-danger col-5' onClick={(e) => deleteWorkflow(work)}>Delete</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody> */}
                             <tbody style={{ textAlign: 'center' }}>
                                 {workflows.length > 0 ? (
                                     workflows.map((work) => (

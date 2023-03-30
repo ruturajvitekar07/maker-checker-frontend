@@ -5,102 +5,16 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import UserNavbar from '../Navbars/UserNavbar';
 import Swal from 'sweetalert2';
-import { UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants';
 
 export default function User() {
 
     const navigate = useNavigate()
     const [fileDatas, setFileDatas] = useState([])
-    const [workflowName, setWorkflowName] = useState('')
-    const [stagename, setStagename] = useState('')
-    const [workflowname, setWorkflowname] = useState('V2')
-    const [event, setEvent] = useState('')
     const [currentStatus, setCurrentStatus] = useState([])
     const [file, setFile] = useState(null);
     const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-
-    // const UserWorkflowList = () => {
-    //     UserAppService.getUserWorkflowList(header)
-    //         .then((response) => {
-    //             if (response.status === 200) {
-    //                 console.log(response.data);
-    //                 const data = response.data;
-    //                 const stage = data[0]?.stages[0]?.stage[0];
-    //                 const ver = data[3]?.version;
-    //                 console.log(ver);
-    //                 setWorkflowname(ver);
-    //                 setStagename(stage.name);
-    //             } else {
-    //                 Swal.fire({
-    //                     icon: 'error',
-    //                     title: 'Error occurred',
-    //                     text: 'Failed to get workflow information',
-    //                     toast: true,
-    //                     position: 'top-end',
-    //                     timer: 4000
-    //                 });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error occurred',
-    //                 text: error.message || 'Failed to load workflow details',
-    //                 toast: true,
-    //                 position: 'top-end',
-    //                 timer: 4000
-    //             });
-    //         });
-    // }
-
-    // const FileList = () => {
-    //     if (workflowname && stagename) {
-    //         UserAppService.getFileList(workflowname, stagename, header)
-    //             .then((response) => {
-    //                 if (response.status === 200) {
-    //                     const sortedData = response.data.sort((a, b) =>
-    //                         a.fileName.localeCompare(b.fileName)
-    //                     );
-    //                     setFileDatas(sortedData);
-    //                 } else {
-    //                     console.log("Error occurred");
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Error occurred',
-    //                         text: 'Failed to fetch file list.',
-    //                         toast: true,
-    //                         position: 'top-end',
-    //                         timer: 4000
-    //                     });
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 console.log(error);
-    //                 if (error.response && error.response.status === 400) {
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Error occurred',
-    //                         text: error.response.data.message || 'Please try again later',
-    //                         toast: true,
-    //                         position: 'top-end',
-    //                         timer: 4000
-    //                     });
-    //                 } else {
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Error occurred',
-    //                         text: error.message || 'Please try again later',
-    //                         toast: true,
-    //                         position: 'top-end',
-    //                         timer: 4000
-    //                     });
-    //                 }
-    //             });
-    //     }
-    // }
 
     const getPendingFilesList = () => {
         UserAppService.getPendingFilesList(header)
@@ -146,12 +60,9 @@ export default function User() {
 
     useEffect(() => {
         getPendingFilesList();
-        // UserWorkflowList();
-        // FileList();
     })
 
     const handleFileInput = (event) => {
-        // UserWorkflowList();
         setFile(event.target.files[0]);
     };
 
@@ -199,23 +110,13 @@ export default function User() {
 
     const handleSubmitPdf = async (e) => {
         e.preventDefault();
-        console.log("pdf event : ", event);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('event', event);
-        // setWorkflowName(workflowname);
-        // formData.append('workflowName', workflowName);
         formData.append('localStorageToken', localStorageToken);
         if (file != null) {
             if (file.type === 'application/pdf') {
                 // handle PDF file
                 try {
-                    // const response = await axios.post('http://localhost:8080/file/upload', formData, {
-                    //     headers: {
-                    //         Authorization: `Bearer ${localStorageToken}`,
-                    //         'Content-Type': 'multipart/form-data',
-                    //     }
-                    // });
                     const response = await UserAppService.uploadSpecificFile(formData, header);
                     console.log(response.data);
                     if (response.status === 200) {
@@ -279,25 +180,13 @@ export default function User() {
 
     const handleSubmitCsv = async (e) => {
         e.preventDefault();
-        console.log("csv event : ", event);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('event', event);
-        // setWorkflowName(workflowname);
-        // formData.append('workflowName', workflowName);
-        // console.log('1 ', workflowName);
         formData.append('localStorageToken', localStorageToken);
         if (file != null) {
             if (file.type === 'text/csv') {
                 // handle CSV file
                 try {
-                    // const response = await axios.post("http://localhost:8080/file/upload", formData,
-                    //     {
-                    //         headers: {
-                    //             Authorization: `Bearer ${localStorageToken}`,
-                    //             'Content-Type': 'multipart/form-data',
-                    //         }
-                    //     });
                     const response = await UserAppService.uploadSpecificFile(formData, header);
                     console.log(response.data); if (response.status === 200) {
                         Swal.fire({

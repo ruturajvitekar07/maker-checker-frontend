@@ -184,7 +184,7 @@ export default function Signup() {
                                 >
                                 </input>
                             </div>
-                            
+
                             <div className="form-group mb-2">
                                 <label htmlFor='password' className="form-label"> Password : </label>
                                 <div className="input-group">

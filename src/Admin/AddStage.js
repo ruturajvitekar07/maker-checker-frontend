@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify'
 import AdminAppService from '../Service/AdminAppService'
@@ -18,18 +17,16 @@ export default function AddStage() {
     const [emailChecked, setEmailChecked] = useState(true);
     const [smsChecked, setSmsChecked] = useState(false);
     const [both, setBoth] = useState(false);
-    const navigate = useNavigate()
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-    const [nextNo, setNextNo] = useState("1");
-
     const { work } = useParams();
 
-    const handleNoChange = (e) => {
-        const currentNo = e.target.value;
-        setNo(currentNo);
-        setNextNo(Number(currentNo) + 1);
-    };
+    // const [nextNo, setNextNo] = useState("1");
+    // const handleNoChange = (e) => {
+    //     const currentNo = e.target.value;
+    //     setNo(currentNo);
+    //     setNextNo(Number(currentNo) + 1);
+    // };
 
     const handleEmailChange = () => {
         setEmailChecked(true);
@@ -168,14 +165,6 @@ export default function AddStage() {
                     <div className="card-body">
                         <h2 class="card-title mb-4" style={{ textAlign: 'center' }}>Add Stage</h2>
                         <form>
-                            {/* <label className="form-label" htmlFor='dropdown1'> Choose a workflow : </label>
-                        <select className="form-select" value={workFlowName} onChange={Handlechangeselect}>
-                            <option disabled>Select workflow</option>
-                            {workflow.map((opt) => (
-                                <option value={opt}>{opt}</option>
-                            ))}
-                        </select> */}
-
                             <div className="form-group mb-2 mt-2">
                                 <label className="form-label"> Stage No : </label>
                                 <input
@@ -185,12 +174,9 @@ export default function AddStage() {
                                     name="no"
                                     className="form-control"
                                     value={no}
-                                    onChange={handleNoChange}
+                                    onChange={(e) => setNo(e.target.value)}
                                 >
                                 </input>
-                                <div>
-                                    <span style={{ color: 'red', marginLeft: '20px', fontSize: '13px' }}>Hint : Next stage number is {nextNo}</span>
-                                </div>
                             </div>
 
                             <div className="form-group mb-2">
@@ -221,20 +207,6 @@ export default function AddStage() {
                                 </input>
                             </div>
 
-                            {/* <div className="form-group mb-2">
-                            <label className="form-label"> Previous stage name : </label>
-                            <input
-                                type="number"
-                                required
-                                placeholder="Enter previous stage number"
-                                name="previousStage"
-                                className="form-control"
-                                value={previousStage}
-                                onChange={(e) => setPreviousStage(e.target.value)}
-                            >
-                            </input>
-                        </div> */}
-
                             <div className="form-group mb-2">
                                 <label className="form-label"> Next stage name : </label>
                                 <input
@@ -250,49 +222,6 @@ export default function AddStage() {
                                 </input>
                                 <span style={{ color: 'red', marginLeft: '20px', fontSize: '13px' }}>If you are entering the last stage, you can skip the next stage</span>
                             </div>
-
-                            {/* <div className="form-group mb-2 mt-2">
-                            <label className="form-label"> Notification Id : </label>
-                            <input
-                                type="number"
-                                required
-                                placeholder="Enter workflow id"
-                                name="workFlowName"
-                                className="form-control"
-                                value={notificationId}
-                                onChange={(e) => setNotificationId(e.target.value)}
-                            >
-                            </input>
-                        </div> */}
-
-                            {/* <div className="form-group mb-2 mt-2">
-                                <label className="form-label"> Email : </label>
-                                <input
-                                    type="email"
-                                    required
-                                    placeholder="Enter email"
-                                    name="email"
-                                    className="form-control"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                >
-                                </input>
-                            </div>
-
-                            <div className="form-group mb-2 mt-2">
-                                <label className="form-label"> Mobile No : </label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="Enter mobile number"
-                                    name="mobileNo"
-                                    className="form-control"
-                                    pattern="[0-9]{10}"
-                                    value={mobileNo}
-                                    onChange={(e) => setMobileNo(e.target.value)}
-                                >
-                                </input>
-                            </div> */}
 
                             <div>
                                 <label className="form-outline mb-2 mt-3 col-4">Notification Type : </label>

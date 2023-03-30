@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react'
-import React from 'react'
-import 'react-toastify/dist/ReactToastify.css';
-import AdminAppService from '../Service/AdminAppService';
-import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { useEffect, useState } from "react";
+import React from "react";
+import "react-toastify/dist/ReactToastify.css";
+import AdminAppService from "../Service/AdminAppService";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function ViewStage() {
-
-  const [workFlows, setWorkFlows] = useState(null);
+  const [workFlows, setWorkFlows] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
   const localStorageToken = sessionStorage.getItem("access_token");
-  const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+  const header = { headers: { Authorization: `Bearer ${localStorageToken}` } };
 
   const getStages = () => {
     AdminAppService.getAllWorkflowsData(header)
@@ -20,33 +19,33 @@ export default function ViewStage() {
           setWorkFlows(res.data);
         } else {
           Swal.fire({
-            icon: 'warning',
-            title: 'Error',
+            icon: "warning",
+            title: "Error",
             toast: true,
-            position: 'top-end',
-            text: 'Failed to get workflows data',
-            timer: 3000
+            position: "top-end",
+            text: "Failed to get workflows data",
+            timer: 3000,
           });
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
+            icon: "error",
+            title: "Error",
             toast: true,
-            position: 'top-end',
-            text: 'Unable to retrieve stages data',
-            timer: 3000
+            position: "top-end",
+            text: "Unable to retrieve stages data",
+            timer: 3000,
           });
         } else {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
+            icon: "error",
+            title: "Error",
             toast: true,
-            position: 'top-end',
-            text: 'Error retrieving data of stages',
-            timer: 3000
+            position: "top-end",
+            text: "Error retrieving data of stages",
+            timer: 3000,
           });
         }
       });
@@ -56,39 +55,37 @@ export default function ViewStage() {
     AdminAppService.getWorkflowList(header)
       .then((response) => {
         if (response.status === 200) {
-          const sortedData = response.data.sort((a, b) =>
-            a.localeCompare(b)
-          );
+          const sortedData = response.data.sort((a, b) => a.localeCompare(b));
           setWorkflows1(sortedData);
         } else {
           Swal.fire({
-            icon: 'warning',
-            title: 'error',
+            icon: "warning",
+            title: "error",
             toast: true,
-            position: 'top-end',
-            text: 'Failed to get workflow list, Please refresh',
-            timer: 3000
+            position: "top-end",
+            text: "Failed to get workflow list, Please refresh",
+            timer: 3000,
           });
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
           Swal.fire({
-            icon: 'Error',
-            title: 'error',
+            icon: "Error",
+            title: "error",
             toast: true,
-            position: 'top-end',
-            text: 'Unable to retrieve workflow list',
-            timer: 3000
+            position: "top-end",
+            text: "Unable to retrieve workflow list",
+            timer: 3000,
           });
         }
       });
   };
 
   useEffect(() => {
-    getStages()
-    workflowList()
-  }, [])
+    workflowList();
+    getStages();
+  }, []);
 
   useEffect(() => {
     if (workflows1.length > 0) {
@@ -99,14 +96,26 @@ export default function ViewStage() {
   return (
     <div>
       <div className="col-10 offset-1">
-        <div className='mt-4'>
-          <h2 className='mt-3' style={{ textAlign: 'center' }}>Stages</h2>
+        <div className="mt-4">
+          <h2 className="mt-3" style={{ textAlign: "center" }}>
+            Stages
+          </h2>
         </div>
-        <div className='col-4'>
-          <label htmlFor='drop' className='mb-2'>Choose Workflow : </label>
-          <select className="form-select" name='drop' value={selectedWorkflow}
-            onChange={(event) => { setSelectedWorkflow(event.target.value); }}>
-            <option defaultValue={"Select a workflow"} disabled>Select a workflow</option>
+        <div className="col-4">
+          <label htmlFor="drop" className="mb-2">
+            Choose Workflow :{" "}
+          </label>
+          <select
+            className="form-select"
+            name="drop"
+            value={selectedWorkflow}
+            onChange={(event) => {
+              setSelectedWorkflow(event.target.value);
+            }}
+          >
+            <option defaultValue={"Select a workflow"} disabled>
+              Select a workflow
+            </option>
             {workflows1.map((work) => (
               <option value={work} key={work}>
                 {work}
@@ -114,10 +123,10 @@ export default function ViewStage() {
             ))}
           </select>
         </div>
-        <div className='mt-4'>
+        <div className="mt-4">
           {selectedWorkflow && (
             <table className="table table-striped">
-              <thead style={{ textAlign: 'center' }}>
+              <thead style={{ textAlign: "center" }}>
                 <tr>
                   <th className="table-primary">Stage Name</th>
                   <th className="table-primary">Stage No</th>
@@ -128,10 +137,13 @@ export default function ViewStage() {
                   <th className="table-primary">Mobile No</th>
                 </tr>
               </thead>
-              <tbody style={{ textAlign: 'center' }}>
-                {
-                  workFlows.find((workflow) => workflow.version === selectedWorkflow)?.stages?.[0]?.stage?.length > 0 ? (
-                    workFlows.find((workflow) => workflow.version === selectedWorkflow).stages[0].stage.map((stage1) => (
+              <tbody style={{ textAlign: "center" }}>
+                {workFlows.find(
+                  (workflow) => workflow.version === selectedWorkflow
+                )?.stages?.[0]?.stage?.length > 0 ? (
+                  workFlows
+                    .find((workflow) => workflow.version === selectedWorkflow)
+                    .stages[0].stage.map((stage1) => (
                       <tr key={stage1.name}>
                         <td>{stage1.name}</td>
                         <td>{stage1.no}</td>
@@ -142,21 +154,29 @@ export default function ViewStage() {
                         <td>{stage1.notification.mobileNo}</td>
                       </tr>
                     ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7">Data not present, Please insert stages in workflow : {selectedWorkflow}</td>
-                    </tr>
-                  )}
+                ) : (
+                  <tr>
+                    <td colSpan="7">
+                      Data not present, Please insert stages in workflow :{" "}
+                      {selectedWorkflow}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           )}
         </div>
-        <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
+        <div
+          className="my-lg-2"
+          style={{ alignContent: "center", alignItems: "center" }}
+        >
           <Link to="/admin">
-            <a className="btn btn-danger" style={{ float: 'right' }}>Back</a>
+            <a className="btn btn-danger" style={{ float: "right" }}>
+              Back
+            </a>
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 
 export default function Workflows() {
 
-    const [selectedWorkflow, setSelectedWorkflow] = useState(null);
     const [workflows, setWorkflows] = useState([])
     const navigate = useNavigate()
     const localStorageToken = sessionStorage.getItem("access_token");
@@ -101,7 +100,6 @@ export default function Workflows() {
     };
 
     const handleAddStage = (workflowName) => {
-        setSelectedWorkflow(workflowName);
         navigate(`/addstage/${workflowName}`);
     };
 

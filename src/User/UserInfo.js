@@ -1,34 +1,50 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 import UserAppService from '../Service/UserAppService'
+import Swal from 'sweetalert2';
 
 export default function UserInfo() {
 
-    const navigate = useNavigate();
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
+    const localStorageToken = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
     useEffect(() => {
-        const localStorageToken = sessionStorage.getItem("access_token");
-        const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
         UserAppService.getUserInfo(header)
             .then((response) => {
                 if (response.status === 200) {
                     console.log(response.data);
-                    setFirstName(response.data.firstName)
-                    setLastName(response.data.lastName)
-                    setEmail(response.data.email)
-                    setRole(response.data.role)
+                    setFirstName(response.data.firstName);
+                    setLastName(response.data.lastName);
+                    setEmail(response.data.email);
+                    setRole(response.data.role);
                 } else {
-                    toast.error("Data not stored", { autoClose: 1000 });
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Unable to fecth data",
+                        toast: true,
+                        position: "top-end",
+                        timer: 1500,
+                    });
                 }
+            }).catch((error) => {
+                console.error(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred while fetching user info.",
+                    toast: true,
+                    position: "top-end",
+                    timer: 1500,
+                });
             })
+
     }, [])
+
 
 
     return (
@@ -98,7 +114,7 @@ export default function UserInfo() {
                                 >
                                 </input>
                             </div>
-{/* 
+                            {/* 
                             <div>
                                 <button className='btn btn-danger' onClick={() => navigate("/user")}>Back</button>
                             </div> */}

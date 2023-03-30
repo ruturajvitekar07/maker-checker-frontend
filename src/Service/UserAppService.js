@@ -29,7 +29,7 @@ class UserAppService {
     //     return axios.get(BASE_REST_API_URL + '/file/list?workflowname=' + workflowname + '&stagename=' + stagename, header)
     // }
 
-    getPendingFilesList(header){
+    getPendingFilesList(header) {
         // http://localhost:8080/file/get-all-list
         return axios.get(BASE_REST_API_URL + '/file/get-all-list', header)
     }

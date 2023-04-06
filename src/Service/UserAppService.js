@@ -24,10 +24,10 @@ class UserAppService {
 
     }
 
-    // getFileList(workflowname, stagename, header) {
-    //     // http://localhost:8080/file/list?workflowname=A1&stagename=upload
-    //     return axios.get(BASE_REST_API_URL + '/file/list?workflowname=' + workflowname + '&stagename=' + stagename, header)
-    // }
+    getFileList(workflowname, stagename, header) {
+        // http://localhost:8080/file/list?workflowname=A1&stagename=upload
+        return axios.get(BASE_REST_API_URL + '/file/list?workflowname=' + workflowname + '&stagename=' + stagename, header)
+    }
 
     getPendingFilesList(header) {
         // http://localhost:8080/file/get-all-list

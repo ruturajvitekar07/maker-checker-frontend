@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div>
       <Navbars />
-      <div className="mt-1 offset-1 col-10" >
+      <div className="mt-1 offset-1 col-10 mb-3" >
         <Carousel />
       </div>
     </div>

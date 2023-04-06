@@ -1,6 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+
 
 export default function UserNavbar(props) {
+
+    const navigate = useNavigate()
+
+    const onLogout = () => {
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    }
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark me-auto ml-lg-2" style={{ backgroundColor: 'hsl(218, 41%, 30%)' }}>
@@ -13,7 +23,7 @@ export default function UserNavbar(props) {
                         <a className="nav-link" href='/profile'>Profile</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" onClick={props.onClick}>Logout</a>
+                        <a className="nav-link" style={{cursor: 'pointer'}} onClick={onLogout}>Logout</a>
                     </li>
                 </ul>
             </div>

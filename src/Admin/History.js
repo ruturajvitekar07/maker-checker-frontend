@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AdminAppService from '../Service/AdminAppService'
 import Swal from 'sweetalert2';
+import AdminNavbar from '../Navbars/AdminNavbar';
 
 export default function History() {
   const [history, setHistory] = useState([])
+  const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
@@ -44,12 +46,13 @@ export default function History() {
   }, [])
 
   return (
-    <div className="container">
-      <div className='mt-5'>
+    <div className="">
+      <AdminNavbar username={username}/>
+      <div className='mt-3'>
         <h2 style={{ textAlign: 'center' }}>History</h2>
       </div>
       <hr />
-      <div className='mt-4'>
+      <div className='mt-4 col-10 offset-1'>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -76,11 +79,6 @@ export default function History() {
             }
           </tbody>
         </table>
-      </div>
-      <div className='my-lg-2' style={{ alignContent: 'center', alignItems: 'center' }}>
-        <Link to="/admin">
-          <a className="btn btn-danger" style={{ float: 'right' }}>Back</a>
-        </Link>
       </div>
     </div>
   )

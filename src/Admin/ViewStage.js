@@ -4,11 +4,13 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminAppService from "../Service/AdminAppService";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import AdminNavbar from "../Navbars/AdminNavbar";
 
 export default function ViewStage() {
   const [workFlows, setWorkFlows] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
+  const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { Authorization: `Bearer ${localStorageToken}` } };
 
@@ -95,6 +97,7 @@ export default function ViewStage() {
 
   return (
     <div>
+      <AdminNavbar username={username} />
       <div className="col-10 offset-1">
         <div className="mt-4">
           <h2 className="mt-3" style={{ textAlign: "center" }}>
@@ -165,16 +168,6 @@ export default function ViewStage() {
               </tbody>
             </table>
           )}
-        </div>
-        <div
-          className="my-lg-2"
-          style={{ alignContent: "center", alignItems: "center" }}
-        >
-          <Link to="/admin">
-            <a className="btn btn-danger" style={{ float: "right" }}>
-              Back
-            </a>
-          </Link>
         </div>
       </div>
     </div>

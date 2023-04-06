@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import UserAppService from '../Service/UserAppService'
 import Swal from 'sweetalert2';
+import UserNavbar from '../Navbars/UserNavbar';
 
 export default function UserInfo() {
 
@@ -9,6 +10,7 @@ export default function UserInfo() {
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
+    const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
@@ -48,12 +50,13 @@ export default function UserInfo() {
 
 
     return (
-        <div className="container">
+        <div>
+            <UserNavbar username={username}/>
             <div className="row">
-                <h2 style={{ textAlign: 'center' }} className="mt-5">Profile</h2>
-                <hr />
-                <div className="card col-md-6 offset-md-3 offset-md-3 mt-3">
+                <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">
+                        <h2 className="card-title mb-4" style={{ textAlign: 'center' }}>Profile</h2>
+                        <hr />
                         <form>
                             <div className="form-group mb-2">
                                 <label className="form-label"> Firstname : </label>
@@ -114,10 +117,6 @@ export default function UserInfo() {
                                 >
                                 </input>
                             </div>
-                            {/* 
-                            <div>
-                                <button className='btn btn-danger' onClick={() => navigate("/user")}>Back</button>
-                            </div> */}
                         </form>
                     </div>
                 </div>

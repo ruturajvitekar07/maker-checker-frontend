@@ -5,6 +5,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import UserNavbar from '../Navbars/UserNavbar';
 import Swal from 'sweetalert2';
+import {UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants'
 
 export default function User() {
 
@@ -112,7 +113,9 @@ export default function User() {
         e.preventDefault();
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('event', UPLOAD_PDF)
         formData.append('localStorageToken', localStorageToken);
+        console.log(localStorageToken);
         if (file != null) {
             if (file.type === 'application/pdf') {
                 // handle PDF file
@@ -134,6 +137,7 @@ export default function User() {
                     setFile('')
                     getPendingFilesList();
                 } catch (error) {
+                    console.log(error);
                     if (error.response && error.response.status === 400) {
                         Swal.fire({
                             icon: 'error',
@@ -182,6 +186,7 @@ export default function User() {
         e.preventDefault();
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('event', UPLOAD_CSV)
         formData.append('localStorageToken', localStorageToken);
         if (file != null) {
             if (file.type === 'text/csv') {
@@ -247,12 +252,6 @@ export default function User() {
         }
     };
 
-    const onLogout = () => {
-        sessionStorage.clear();
-        localStorage.clear();
-        navigate('/login')
-    }
-
     const popover = (
         <Popover id="popover-basic">
             <Popover.Header as="h3">History</Popover.Header>
@@ -271,7 +270,7 @@ export default function User() {
 
     return (
         <div className="">
-            <UserNavbar username={username} onClick={onLogout} />
+            <UserNavbar username={username} />
             <div className='container-fluid col-10 offset-1'>
                 <div className='mt-3'>
                     <div className='row mt-3'>

@@ -151,47 +151,34 @@ export default function Admin() {
     getUserList()
   }, [])
 
-  const onLogout = () => {
-    sessionStorage.removeItem('access_token')
-    localStorage.removeItem('access_token')
-    sessionStorage.removeItem('username')
-    localStorage.removeItem('username')
-    navigate('/login')
-  }
-
   return (
-    <div className="">
-      <div className="col">
-        <div className='mt-3'>
-          <AdminNavbar username={username} onClick={onLogout} />
-          {/* <hr /> */}
-        </div>
-        <div className='mt-4 col-10 offset-1'>
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th className="table-primary">Name</th>
-                <th className="table-primary">Email</th>
-                <th className="table-primary">Role</th>
-                <th className="table-primary">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                users.map((user) =>
-                  <tr key={user.email}>
-                    <td>{user.firstName} {user.lastName}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <button className='btn btn-danger col-7' onClick={(e) => deleteUser(user.email)}>Delete</button>
-                    </td>
-                  </tr>
-                )
-              }
-            </tbody>
-          </table>
-        </div>
+    <div>
+      <AdminNavbar username={username} />
+      <div className='mt-4 col-10 offset-1'>
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th className="table-primary">Name</th>
+              <th className="table-primary">Email</th>
+              <th className="table-primary">Role</th>
+              <th className="table-primary">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              users.map((user) =>
+                <tr key={user.email}>
+                  <td>{user.firstName} {user.lastName}</td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                  <td>
+                    <button className='btn btn-danger col-7' onClick={(e) => deleteUser(user.email)}>Delete</button>
+                  </td>
+                </tr>
+              )
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   )

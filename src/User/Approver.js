@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import UserNavbar from "../Navbars/UserNavbar";
 import Swal from "sweetalert2";
-import { APPROVED, DECLINED } from "../Constants/constants";
+import { APPROVED, DECLINED, Workflow_CSV, Workflow_PDF } from "../Constants/constants";
 
 export default function Approver() {
     const [comment, setComment] = useState("");
@@ -76,8 +76,10 @@ export default function Approver() {
             .then((response) => {
                 if (response.status === 200) {
                     const data = response.data;
+                    console.log(data);
                     const stage = data[0]?.stages[0]?.stage[0];
                     const ver = data[0]?.version;
+                    console.log(ver);
                     setWorkflowName(ver);
                     setStageName(stage.previousStage);
                     pendingFiles(ver, stage.previousStage);
@@ -93,13 +95,11 @@ export default function Approver() {
                 }
             })
             .catch((error) => {
+                console.log(error);
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text:
-                        error.response.data.message ||
-                        error.message ||
-                        "Failed to get user workflow list.",
+                    text: "Failed to get user workflow list.",
                     toast: true,
                     position: "top-end",
                     timer: 1500,
@@ -110,6 +110,7 @@ export default function Approver() {
     const pendingFiles = (v1, stageName1) => {
         UserAppService.getFileList(v1, stageName1, header)
             .then((response) => {
+                console.log(response.data);
                 if (response.status === 200) {
                     const sortedData = response.data.sort((a, b) => {
                         if (a.fileName < b.fileName) {
@@ -173,6 +174,8 @@ export default function Approver() {
                         });
                     }
                     setComment("");
+                    handleClose()
+                    handleClose1()
                     getPendigFileLists();
                 } else {
                     Swal.fire({

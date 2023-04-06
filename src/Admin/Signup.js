@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2';
 import AdminAppService from '../Service/AdminAppService'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import AdminNavbar from '../Navbars/AdminNavbar';
 
 export default function Signup() {
 
@@ -14,6 +15,8 @@ export default function Signup() {
     const [password, setPassword] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
     const navigate = useNavigate()
+    const username = sessionStorage.getItem("username");
+
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
@@ -118,11 +121,13 @@ export default function Signup() {
     }
 
     return (
-        <div className="container">
+        <div className="">
+            <AdminNavbar username={username}/>
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">
                         <h2 class="card-title mb-4" style={{ textAlign: 'center' }}>Registeration</h2>
+                        <hr/>
                         <form>
                             <div className="form-group mb-2">
                                 <label htmlFor='firstName' className="form-label"> Firstname : </label>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
+import UserAppService from '../Service/UserAppService'
 import styles from '../LogIn/myStyle.module.css';
 import Navbars from "../Navbars/Navbars";
 import Swal from 'sweetalert2';
@@ -67,7 +68,7 @@ const NewLogin = () => {
                         else if (username !== null) {
                             const localStorageToken = sessionStorage.getItem("access_token");
                             const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
-                            AppService.getUserInfo(header)
+                            UserAppService.getUserInfo(header)
                                 .then((response) => {
                                     if (response.status === 200) {
                                         setIsLoggedIn(true);
@@ -100,6 +101,7 @@ const NewLogin = () => {
                     }
                 })
                 .catch((error) => {
+                    console.log(error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -124,7 +126,7 @@ const NewLogin = () => {
                     )}
                 </>
             ) : (
-                <div className='mt-1'>
+                <div>
                     <Navbars />
                     <section className={styles.backgroundRadialGradient}>
                         <div className="container px-4 py-5 px-md-5 text-center text-lg-start">

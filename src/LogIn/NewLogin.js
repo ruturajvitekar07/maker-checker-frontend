@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import AppService from '../Service/AppService'
@@ -7,6 +7,11 @@ import styles from '../LogIn/myStyle.module.css';
 import Navbars from "../Navbars/Navbars";
 import Swal from 'sweetalert2';
 import { D9862 } from '../Constants/constants'
+import { useIdleTimer } from 'react-idle-timer';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
 
 const NewLogin = () => {
 
@@ -16,13 +21,69 @@ const NewLogin = () => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [timeoutId, setTimeoutId] = useState(null);
+    const [isSwalOpen, setIsSwalOpen] = useState(false);
+    const [remainingTime, setRemainingTime] = useState(0);
 
     //==================Login====================
+
+    // const handleOnIdle = () => {
+    //     if (!isSwalOpen && isLoggedIn) {
+    //         MySwal.fire({
+    //             title: 'You have been idle for a while!',
+    //             text: 'You will be logged out soon',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Stay logged in',
+    //             cancelButtonText: 'Log out',
+    //             cancelButtonColor: '#dc3545',
+    //             reverseButtons: true,
+    //         }).then((result) => {
+    //             clearTimeout(timeoutId);
+    //             if (result.isConfirmed) {
+    //                 console.log('User wants to stay');
+    //                 setIsSwalOpen(false);
+    //             } else {
+    //                 handleLogout();
+    //             }
+    //         });
+    //         setIsSwalOpen(true);
+    //     }
+    // };
+
+    // const handleLogout = () => {
+    //     setIsLoggedIn(false);
+    //     clearTimeout(timeoutId);
+    //     console.log('User has been logged out');
+    //     setTimeoutId(null);
+    //     setIsSwalOpen(false);
+    //     MySwal.close();
+    // };
+
+    // const { getRemainingTime, reset } = useIdleTimer({
+    //     timeout: 1000 * 6,
+    //     onIdle: handleOnIdle,
+    // });
+
+    // useEffect(() => {
+    //     setRemainingTime(getRemainingTime());
+    //     const intervalId = setInterval(() => {
+    //         setRemainingTime(getRemainingTime());
+    //     }, 1000);
+    //     return () => clearInterval(intervalId);
+    // }, [getRemainingTime]);
+
+    // const handleMouseMove = () => {
+    //     if (isLoggedIn) {
+    //         if (getRemainingTime() < 1000 * 6) {
+    //             reset({ timeout: 1000 * 6 });
+    //         }
+    //     }
+    // };
 
     const onLogin = (e) => {
         e.preventDefault();
         const userCredentials = { username, password }
-        if (username.length == 0) {
+        if (username.length === 0) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Error!',
@@ -32,7 +93,7 @@ const NewLogin = () => {
                 showConfirmButton: false,
                 timer: 2000
             });
-        } else if (password.length == 0) {
+        } else if (password.length === 0) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Error!',
@@ -63,7 +124,7 @@ const NewLogin = () => {
                         sessionStorage['access_token'] = access_token
                         sessionStorage['username'] = username
                         sessionStorage['expires_in'] = expires_in
-                        if (username == "ADMIN")
+                        if (username === "ADMIN")
                             navigate('/admin')
                         else if (username !== null) {
                             const localStorageToken = sessionStorage.getItem("access_token");
@@ -73,7 +134,9 @@ const NewLogin = () => {
                                     if (response.status === 200) {
                                         setIsLoggedIn(true);
                                         setRole(response.data.role);
-                                    } else if (response.status === 400) {
+                                        console.log(isLoggedIn);
+                                    }
+                                    else if (response.status === 400) {
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error!',
@@ -120,9 +183,9 @@ const NewLogin = () => {
             {isLoggedIn ? (
                 <>
                     {role === D9862 ? (
-                        navigate("/user")
+                        navigate("/user", { state: { isLoggedIn: true } })
                     ) : (
-                        navigate("/approver")
+                        navigate("/approver", { state: { isLoggedIn: true } })
                     )}
                 </>
             ) : (

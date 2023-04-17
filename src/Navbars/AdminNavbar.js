@@ -40,7 +40,7 @@ export default function AdminNavbar(props) {
                         <a className="nav-link" href="/history">History</a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" style={{cursor: 'pointer'}} onClick={onLogout}>Logout</a>
+                        <a className="nav-link" style={{ cursor: 'pointer' }} onClick={onLogout}>Logout</a>
                     </li>
                 </ul>
             </div>

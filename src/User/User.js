@@ -5,7 +5,11 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import UserNavbar from '../Navbars/UserNavbar';
 import Swal from 'sweetalert2';
-import {UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants'
+import { UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants'
+import { useIdleTimer } from 'react-idle-timer';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 export default function User() {
 
@@ -16,6 +20,60 @@ export default function User() {
     const username = sessionStorage.getItem("username");
     const localStorageToken = sessionStorage.getItem("access_token");
     const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isSwalOpen, setIsSwalOpen] = useState(false);
+
+    const { getRemainingTime, reset } = useIdleTimer({
+        timeout: 1000 * 60 * 3, // 5 minutes
+        onIdle: () => {
+            console.log('User is idle');
+            handleLogout(); // call the logout function when the user is idle
+        },
+    });
+
+    const handleOnIdle = () => {
+        const remainingTime = getRemainingTime();
+        if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {
+            // show a warning message to the user when they have 1 minute left before being logged out
+            MySwal.fire({
+                title: 'You have been idle for a while!',
+                text: `You will be logged out in ${remainingTime / 1000} seconds`,
+                showCancelButton: true,
+                confirmButtonText: 'Stay logged in',
+                cancelButtonText: 'Log out',
+                cancelButtonColor: '#dc3545',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('User wants to stay');
+                    setIsSwalOpen(false);
+                    reset(); // reset the idle timer when the user wants to stay logged in
+                } else {
+                    handleLogout();
+                }
+            });
+            setIsSwalOpen(true);
+        }
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset(); // reset the idle timer when the user logs out
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    };
+
+    useEffect(() => {
+        let intervalId;
+        if (isLoggedIn) {
+            intervalId = setInterval(() => {
+                handleOnIdle(); // check for idle state every second
+            }, 1000);
+        }
+        return () => clearInterval(intervalId); // clear the interval when the component unmounts or when the user logs out
+    }, [isLoggedIn]);
 
     const getPendingFilesList = () => {
         UserAppService.getPendingFilesList(header)
@@ -270,7 +328,7 @@ export default function User() {
 
     return (
         <div className="">
-            <UserNavbar username={username} />
+            <UserNavbar username={username} onLogout={handleLogout} />
             <div className='container-fluid col-10 offset-1'>
                 <div className='mt-3'>
                     <div className='row mt-3'>

@@ -7,6 +7,10 @@ import Modal from "react-bootstrap/Modal";
 import UserNavbar from "../Navbars/UserNavbar";
 import Swal from "sweetalert2";
 import { APPROVED, DECLINED, Workflow_CSV, Workflow_PDF } from "../Constants/constants";
+import { useIdleTimer } from 'react-idle-timer';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 export default function Approver() {
     const [comment, setComment] = useState("");
@@ -35,6 +39,60 @@ export default function Approver() {
         setStatus(DECLINED);
         setFileName(file1);
     };
+
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isSwalOpen, setIsSwalOpen] = useState(false);
+
+    const { getRemainingTime, reset } = useIdleTimer({
+        timeout: 1000 * 60 * 10,     // 5 minutes
+        onIdle: () => {
+            console.log('User is idle');
+            handleLogout();     // call the logout function when the user is idle
+        },
+    });
+
+    const handleOnIdle = () => {
+        const remainingTime = getRemainingTime();
+        if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {           // show a warning message to the user when they have 1 minute left before being logged out
+            MySwal.fire({
+                title: 'You have been idle for a while!',
+                text: `You will be logged out in ${remainingTime / 1000} seconds`,
+                showCancelButton: true,
+                confirmButtonText: 'Stay logged in',
+                cancelButtonText: 'Log out',
+                cancelButtonColor: '#dc3545',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('User wants to stay');
+                    setIsSwalOpen(false);
+                    reset(); // reset the idle timer when the user wants to stay logged in
+                } else {
+                    handleLogout();
+                }
+            });
+            setIsSwalOpen(true);
+        }
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset(); // reset the idle timer when the user logs out
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    };
+
+    useEffect(() => {
+        let intervalId;
+        if (isLoggedIn) {
+            intervalId = setInterval(() => {
+                handleOnIdle(); // check for idle state every second
+            }, 1000);
+        }
+        return () => clearInterval(intervalId); // clear the interval when the component unmounts or when the user logs out
+    }, [isLoggedIn]);
 
     const getPendigFileLists = () => {
         UserAppService.getUserInfo(header)
@@ -149,6 +207,19 @@ export default function Approver() {
     };
 
     const fileDecision = (fileName) => {
+
+        if (!comment) {
+            Swal.fire({
+                icon: "warning",
+                title: "Comment is required",
+                text: "Please enter a comment before submitting your decision",
+                toast: true,
+                position: "top-end",
+                timer: 4500,
+            });
+            return;
+        }
+
         const decision = { fileName, role, status, workflowName, comment };
         UserAppService.fileApproveDecline(decision, header)
             .then((response) => {
@@ -253,19 +324,13 @@ export default function Approver() {
         }
     };
 
-    const onLogout = () => {
-        sessionStorage.clear();
-        localStorage.clear();
-        navigate("/login");
-    };
-
     useEffect(() => {
         getPendigFileLists();
     }, []);
 
     return (
         <div className="">
-            <UserNavbar username={username} role={role} onClick={onLogout} />
+            <UserNavbar username={username} onLogout={handleLogout} />
             <div className="container-fluid">
                 <div className="col-10 offset-1 mt-4">
                     <table className="table table-striped">

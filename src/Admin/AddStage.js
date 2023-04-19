@@ -175,94 +175,94 @@ export default function AddStage() {
                     <div className="card-body">
                         <h2 className="card-title mb-4" style={{ textAlign: 'center' }}>Add Stage</h2>
                         <hr />
-                        {/* <form> */}
-                        <div className="form-group mb-2 mt-2">
-                            <label className="form-label"> Stage No : </label>
-                            <input
-                                type="number"
-                                required
-                                placeholder="Enter stage number"
-                                name="no"
-                                className="form-control"
-                                value={no}
-                                onChange={(e) => setNo(e.target.value)}
-                            >
-                            </input>
-                        </div>
-
-                        <div className="form-group mb-2">
-                            <label className="form-label"> Stage Name : </label>
-                            <input
-                                type="text"
-                                required
-                                placeholder="Enter stage name"
-                                name="name"
-                                className="form-control"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            >
-                            </input>
-                        </div>
-
-                        <div className="form-group mb-2">
-                            <label className="form-label"> Role : </label>
-                            <input
-                                type="text"
-                                required
-                                placeholder="Enter role"
-                                name="role"
-                                className="form-control"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                            >
-                            </input>
-                        </div>
-
-                        <div className="form-group mb-2">
-                            <label className="form-label"> Next stage name : </label>
-                            <input
-                                type="text"
-                                required
-                                placeholder="Enter next stage number"
-                                name="nextStage"
-                                className="form-control"
-                                value={nextStage}
-                                onChange={(e) => setNextStage(e.target.value)}
-                                title={"If you are entering the last stage, you can skip the next stage"}
-                            >
-                            </input>
-                            <span style={{ color: 'red', marginLeft: '20px', fontSize: '13px' }}>If you are entering the last stage, you can skip the next stage</span>
-                        </div>
-
-                        <div>
-                            <label className="form-outline mb-2 mt-3 col-4">Notification Type : </label>
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">
-                                    <input className="form-check-input" type="checkbox" value="email" checked={emailChecked} onChange={handleEmailChange} />
-                                    Email
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">
-                                    <input className="form-check-input" type="checkbox" value="sms" checked={smsChecked} onChange={handleSmsChange} />
-                                    SMS
-                                </label>
+                        <form onSubmit={addStage}>
+                            <div className="form-group mb-2 mt-2">
+                                <label className="form-label"> Stage No : </label>
+                                <input
+                                    type="number"
+                                    required
+                                    placeholder="Enter stage number"
+                                    name="no"
+                                    className="form-control"
+                                    value={no}
+                                    onChange={(e) => setNo(e.target.value)}
+                                >
+                                </input>
                             </div>
 
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">
-                                    <input className="form-check-input" type="checkbox" value="both" checked={both} onChange={handleBoth} />
-                                    Both
-                                </label>
+                            <div className="form-group mb-2">
+                                <label className="form-label"> Stage Name : </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Enter stage name"
+                                    name="name"
+                                    className="form-control"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                >
+                                </input>
                             </div>
-                        </div>
 
-                        <div className='mt-3'>
-                            <button className="btn btn-success" onClick={() => addStage()}>Submit</button>
-                            &nbsp;&nbsp;
-                            <Link to="/admin" className="btn btn-danger">Cancel</Link>
-                        </div>
-                        {/* </form> */}
+                            <div className="form-group mb-2">
+                                <label className="form-label"> Role : </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Enter role"
+                                    name="role"
+                                    className="form-control"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                >
+                                </input>
+                            </div>
+
+                            <div className="form-group mb-2">
+                                <label className="form-label"> Next stage name : </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Enter next stage number"
+                                    name="nextStage"
+                                    className="form-control"
+                                    value={nextStage}
+                                    onChange={(e) => setNextStage(e.target.value)}
+                                    title={"If you are entering the last stage, you can skip the next stage"}
+                                >
+                                </input>
+                                <span style={{ color: 'red', marginLeft: '20px', fontSize: '13px' }}>If you are entering the last stage, you can skip the next stage</span>
+                            </div>
+
+                            <div>
+                                <label className="form-outline mb-2 mt-3 col-4">Notification Type : </label>
+                                <div className="form-check form-check-inline">
+                                    <label className="form-check-label">
+                                        <input className="form-check-input" type="checkbox" value="email" checked={emailChecked} onChange={handleEmailChange} />
+                                        Email
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <label className="form-check-label">
+                                        <input className="form-check-input" type="checkbox" value="sms" checked={smsChecked} onChange={handleSmsChange} />
+                                        SMS
+                                    </label>
+                                </div>
+
+                                <div className="form-check form-check-inline">
+                                    <label className="form-check-label">
+                                        <input className="form-check-input" type="checkbox" value="both" checked={both} onChange={handleBoth} />
+                                        Both
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className='mt-3'>
+                                <button type="submit" className="btn btn-success">Submit</button>
+                                &nbsp;&nbsp;
+                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

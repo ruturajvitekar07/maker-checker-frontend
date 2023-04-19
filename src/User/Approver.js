@@ -32,6 +32,7 @@ export default function Approver() {
         setStatus(APPROVED);
         setFileName(file1);
     };
+    
     const [show1, setShow1] = useState(false);
     const handleClose1 = () => setShow1(false);
     const handleShow1 = (file1) => {
@@ -78,7 +79,7 @@ export default function Approver() {
     const handleLogout = () => {
         setIsLoggedIn(false);
         console.log('User has been logged out');
-        reset(); // reset the idle timer when the user logs out
+        reset();                               // reset the idle timer when the user logs out
         sessionStorage.clear();
         localStorage.clear();
         navigate('/login')

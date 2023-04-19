@@ -5,6 +5,11 @@ import { useNavigate } from 'react-router-dom'
 import AdminAppService from '../Service/AdminAppService'
 import Swal from 'sweetalert2';
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useIdleTimer } from 'react-idle-timer';
+import withReactContent from 'sweetalert2-react-content';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
+const MySwal = withReactContent(Swal);
 
 export default function Admin() {
 
@@ -13,6 +18,60 @@ export default function Admin() {
   const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");
   const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isSwalOpen, setIsSwalOpen] = useState(false);
+
+  const { getRemainingTime, reset } = useIdleTimer({
+    timeout: 1000 * 60 * 10,     // 5 minutes
+    onIdle: () => {
+      console.log('User is idle');
+      handleLogout();     // call the logout function when the user is idle
+    },
+  });
+
+  const handleOnIdle = () => {
+    const remainingTime = getRemainingTime();
+    if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {           // show a warning message to the user when they have 1 minute left before being logged out
+      MySwal.fire({
+        title: 'You have been idle for a while!',
+        text: `You will be logged out in ${remainingTime / 1000} seconds`,
+        showCancelButton: true,
+        confirmButtonText: 'Stay logged in',
+        cancelButtonText: 'Log out',
+        cancelButtonColor: '#dc3545',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log('User wants to stay');
+          setIsSwalOpen(false);
+          reset(); // reset the idle timer when the user wants to stay logged in
+        } else {
+          handleLogout();
+        }
+      });
+      setIsSwalOpen(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    console.log('User has been logged out');
+    reset();                               // reset the idle timer when the user logs out
+    sessionStorage.clear();
+    localStorage.clear();
+    navigate('/login')
+  };
+
+  useEffect(() => {
+    let intervalId;
+    if (isLoggedIn) {
+      intervalId = setInterval(() => {
+        handleOnIdle(); // check for idle state every second
+      }, 1000);
+    }
+    return () => clearInterval(intervalId); // clear the interval when the component unmounts or when the user logs out
+  }, [isLoggedIn]);
 
   const getUserList = () => {
     AdminAppService.getUserList(header)
@@ -146,6 +205,11 @@ export default function Admin() {
     }
   };
 
+  const tooltip = (
+    <Tooltip>
+      User will Inactive if you press this button
+    </Tooltip>
+  );
 
   useEffect(() => {
     getUserList()
@@ -161,7 +225,7 @@ export default function Admin() {
               <th className="table-primary">Name</th>
               <th className="table-primary">Email</th>
               <th className="table-primary">Role</th>
-              <th className="table-primary">Action</th>
+              <th className="table-primary">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -172,7 +236,12 @@ export default function Admin() {
                   <td>{user.email}</td>
                   <td>{user.role}</td>
                   <td>
-                    <button className='btn btn-danger col-7' onClick={(e) => deleteUser(user.email)}>Delete</button>
+                    <button className='btn btn-danger col-4' onClick={(e) => deleteUser(user.email)}>Delete</button> &nbsp;
+                    <OverlayTrigger placement="right" overlay={tooltip}>
+                      <button className="btn btn-warning col-4" onClick={(e) => deleteUser(user.email)}>
+                        Inactive
+                      </button>
+                    </OverlayTrigger>
                   </td>
                 </tr>
               )

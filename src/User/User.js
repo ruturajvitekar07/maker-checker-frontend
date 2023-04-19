@@ -326,6 +326,30 @@ export default function User() {
         </Popover>
     );
 
+    window.addEventListener('popstate', function (event) {
+        if (isLoggedIn) {
+            window.history.go(-(window.history.length - 1));
+
+            Swal.fire({
+                title: 'Warning',
+                text: 'You cannot go back. Please logout first.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Logout and return to login page',
+                cancelButtonText: 'Stay on this page'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleLogout();
+                } else {
+                    console.log(window.location.href);
+                    window.history.pushState(null, null, window.location.href);
+                }
+            });
+        }
+    });
+
     return (
         <div className="">
             <UserNavbar username={username} onLogout={handleLogout} />

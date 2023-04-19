@@ -7,10 +7,10 @@ import styles from '../LogIn/myStyle.module.css';
 import Navbars from "../Navbars/Navbars";
 import Swal from 'sweetalert2';
 import { D9862 } from '../Constants/constants'
-import { useIdleTimer } from 'react-idle-timer';
-import withReactContent from 'sweetalert2-react-content';
+// import { useIdleTimer } from 'react-idle-timer';
+// import withReactContent from 'sweetalert2-react-content';
 
-const MySwal = withReactContent(Swal);
+// const MySwal = withReactContent(Swal);
 
 
 const NewLogin = () => {
@@ -21,9 +21,10 @@ const NewLogin = () => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [timeoutId, setTimeoutId] = useState(null);
-    const [isSwalOpen, setIsSwalOpen] = useState(false);
-    const [remainingTime, setRemainingTime] = useState(0);
+    const [failedAttempts, setFailedAttempts] = useState(0);
+    // const [timeoutId, setTimeoutId] = useState(null);
+    // const [isSwalOpen, setIsSwalOpen] = useState(false);
+    // const [remainingTime, setRemainingTime] = useState(0);
 
     //==================Login====================
 
@@ -137,6 +138,7 @@ const NewLogin = () => {
                                         console.log(isLoggedIn);
                                     }
                                     else if (response.status === 400) {
+                                        setFailedAttempts(failedAttempts + 1);
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error!',
@@ -148,6 +150,7 @@ const NewLogin = () => {
                                         });
                                     }
                                     else {
+                                        setFailedAttempts(failedAttempts + 1);
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Oops...',
@@ -164,6 +167,7 @@ const NewLogin = () => {
                     }
                 })
                 .catch((error) => {
+                    setFailedAttempts(failedAttempts + 1);
                     console.log(error);
                     Swal.fire({
                         icon: 'error',
@@ -177,6 +181,42 @@ const NewLogin = () => {
                 })
         }
     };
+
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            const isLoggedIn = false; // replace with your login check logic
+
+            if (!isLoggedIn) {
+                event.preventDefault();
+                event.returnValue = '';
+
+                Swal({
+                    title: 'Please login first',
+                    icon: 'warning',
+                    buttons: {
+                        cancel: 'Cancel',
+                        confirm: {
+                            text: 'Stay on Page',
+                            value: 'stay',
+                        },
+                    },
+                }).then((value) => {
+                    if (value === 'stay') {
+                        // do nothing, allow user to stay on page
+                    } else {
+                        // redirect to login page
+                        window.location.href = '/login';
+                    }
+                });
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     return (
         <>
@@ -254,6 +294,8 @@ const NewLogin = () => {
                                                     <div className="offset-1 col-lg-10">
                                                         <div>
                                                             <button onClick={(e) => onLogin(e)} className="btn btn-primary btn-block mb-4" style={{ alignContent: "center" }}>Login</button>
+                                                            <br />
+                                                            {failedAttempts > 0 && <p>Failed login attempts: {failedAttempts}</p>}
                                                         </div>
                                                     </div>
                                                 </div>

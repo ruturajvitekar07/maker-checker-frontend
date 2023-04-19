@@ -48,10 +48,10 @@ class AdminAppService {
         return axios.get(BASE_REST_API_URL + '/admin/get-workflow-list', header)
     }
 
-    // deleteStageFile(header) {
-    //     // http://localhost:8080/admin/delete-stage-data
-    //     return axios.delete(BASE_REST_API_URL + '/admin/delete-stage-data', header)
-    // }
+    deleteStageFile(header) {
+        // http://localhost:8080/admin/delete-stage-data
+        return axios.delete(BASE_REST_API_URL + '/admin/delete-stage-data', header)
+    }
 
     createStage(stage, header) {
         // http://localhost:8080/admin/add-stage
@@ -63,14 +63,19 @@ class AdminAppService {
         return axios.post(BASE_REST_API_URL + '/admin/add-workflow', workflow, header)
     }
 
-    createStageByWorkflowName(workFlowName, workFlowBody, header) {
-        // http://localhost:8080/admin/add-workflow-stage?workFlowName=v2
-        return axios.post(BASE_REST_API_URL + '/admin/add-workflow-stage?version=' + workFlowName, workFlowBody, header)
+    createStageByWorkflowName(workFlowBody, header) {
+        // http://localhost:8080/admin/add-workflow-stage
+        return axios.post(BASE_REST_API_URL + '/admin/add-workflow-stage', workFlowBody, header)
     }
 
     getUserList(header) {
         // http://localhost:8080/admin/get-user-list
         return axios.get(BASE_REST_API_URL + '/admin/get-user-list', header)
+    }
+
+    setStatusInactive(statusRequest, header) {
+        // http://localhost:8080/admin/change-status
+        return axios.get(BASE_REST_API_URL + '/admin/change-status', statusRequest, header)
     }
 }
 export default new AdminAppService();

@@ -6,13 +6,13 @@ export default function AdminNavbar(props) {
 
     const navigate = useNavigate()
 
-    const onLogout = () => {
-        sessionStorage.removeItem('access_token')
-        localStorage.removeItem('access_token')
-        sessionStorage.removeItem('username')
-        localStorage.removeItem('username')
-        navigate('/login')
-    }
+    // const onLogout = () => {
+    //     sessionStorage.removeItem('access_token')
+    //     localStorage.removeItem('access_token')
+    //     sessionStorage.removeItem('username')
+    //     localStorage.removeItem('username')
+    //     navigate('/login')
+    // }
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark mt-0" style={{ backgroundColor: 'hsl(218, 41%, 30%)' }}>
@@ -40,7 +40,7 @@ export default function AdminNavbar(props) {
                         <a className="nav-link" href="/history">History</a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" style={{ cursor: 'pointer' }} onClick={onLogout}>Logout</a>
+                        <a className="nav-link" style={{ cursor: 'pointer' }} onClick={props.onLogout}>Logout</a>
                     </li>
                 </ul>
             </div>

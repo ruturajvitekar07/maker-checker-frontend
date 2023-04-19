@@ -8,12 +8,14 @@ import AdminNavbar from '../Navbars/AdminNavbar';
 import { useIdleTimer } from 'react-idle-timer';
 import withReactContent from 'sweetalert2-react-content';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ACTIVE, INACTIVE } from '../Constants/constants'
 
 const MySwal = withReactContent(Swal);
 
 export default function Admin() {
 
   const [users, setUsers] = useState([])
+  const [status, setStatus] = useState("")
   const navigate = useNavigate()
   const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");
@@ -22,8 +24,20 @@ export default function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isSwalOpen, setIsSwalOpen] = useState(false);
 
+  const getTooltipText = (status) => {
+    if (status === ACTIVE) {
+      return 'Click to set user as Active';
+    } else {
+      return 'Click to set user as Inactive';
+    }
+  };
+
+  const tooltip = (status) => (
+    <Tooltip>{getTooltipText(status)}</Tooltip>
+  );
+
   const { getRemainingTime, reset } = useIdleTimer({
-    timeout: 1000 * 60 * 10,     // 5 minutes
+    timeout: 1000 * 60 * 10,     // 10 minutes
     onIdle: () => {
       console.log('User is idle');
       handleLogout();     // call the logout function when the user is idle
@@ -151,6 +165,114 @@ export default function Admin() {
       });
   }
 
+  const setUserStatus = async (userEmail, status) => {
+    const newStatus = status === ACTIVE ? ACTIVE : INACTIVE; // Get the new status
+
+    const statusRequest = { userEmail, status };
+    try {
+      const response = await Swal.fire({
+        icon: 'warning',
+        title: 'Are you sure?',
+        text: `Do you want to change the status of ${userEmail} to ${newStatus}?`,
+        showCancelButton: true,
+        confirmButtonText: `Yes, change it to ${newStatus}!`,
+        cancelButtonText: 'No, cancel!',
+      });
+
+      if (response.isConfirmed) {
+        const result = await AdminAppService.setStatusInactive(statusRequest, header);
+
+        if (result.status === 200) {
+          getUserList();
+          Swal.fire({
+            icon: 'success',
+            title: 'Status Changed!',
+            text: `${userEmail}'s status has been changed to ${newStatus}.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: `Something went wrong! Failed to change the user status to ${newStatus}.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: `Bad Request! Failed to change the user status to ${newStatus}.`,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  }
+
+
+  // const setUserStatus = async (userEmail, status) => {
+  //   const statusRequest = { userEmail, status };
+  //   try {
+  //     const response = await Swal.fire({
+  //       icon: 'warning',
+  //       title: 'Are you sure ?',
+  //       text: `Do you want to change the ${userEmail} status ?`,
+  //       showCancelButton: true,
+  //       confirmButtonText: 'Yes, change it!',
+  //       cancelButtonText: 'No, cancel!',
+  //     });
+
+  //     if (response.isConfirmed) {
+  //       const result = await AdminAppService.setStatusInactive(statusRequest, header);
+  //       if (result.status === 200) {
+  //         getUserList();
+  //         Swal.fire({
+  //           icon: 'success',
+  //           title: 'Status Changed!',
+  //           text: `${userEmail}'s status has been changed to ${status}.`,
+  //           toast: true,
+  //           position: 'top-end',
+  //           showConfirmButton: false,
+  //           timer: 1500,
+  //         });
+  //       } else {
+  //         Swal.fire({
+  //           icon: 'warning',
+  //           title: 'Oops...',
+  //           text: 'Something went wrong! Failed to change the user status to inactive',
+  //           toast: true,
+  //           position: 'top-end',
+  //           showConfirmButton: false,
+  //           timer: 1500,
+  //         });
+  //       }
+  //     }
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 400) {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Oops...',
+  //         text: 'Bad Request! Failed to change the user status to inactive',
+  //         toast: true,
+  //         position: 'top-end',
+  //         showConfirmButton: false,
+  //         timer: 1500,
+  //       });
+  //     }
+  //   }
+  // }
+
 
   const deleteUser = async (username) => {
     try {
@@ -199,17 +321,9 @@ export default function Admin() {
           showConfirmButton: false,
           timer: 1500,
         });
-      } else {
-        toast.warning(error.message, { autoClose: 1500 });
       }
     }
   };
-
-  const tooltip = (
-    <Tooltip>
-      User will Inactive if you press this button
-    </Tooltip>
-  );
 
   useEffect(() => {
     getUserList()
@@ -217,7 +331,7 @@ export default function Admin() {
 
   return (
     <div>
-      <AdminNavbar username={username} />
+      <AdminNavbar username={username} onLogout={handleLogout} />
       <div className='mt-4 col-10 offset-1'>
         <table className="table table-striped">
           <thead>
@@ -237,10 +351,16 @@ export default function Admin() {
                   <td>{user.role}</td>
                   <td>
                     <button className='btn btn-danger col-4' onClick={(e) => deleteUser(user.email)}>Delete</button> &nbsp;
-                    <OverlayTrigger placement="right" overlay={tooltip}>
-                      <button className="btn btn-warning col-4" onClick={(e) => deleteUser(user.email)}>
-                        Inactive
-                      </button>
+                    <OverlayTrigger placement="right" overlay={tooltip(user.status)}>
+                      {user.status === ACTIVE ?
+                        <button className="btn btn-success col-4" onClick={(e) => setUserStatus(user.email, ACTIVE)}>
+                          Active
+                        </button>
+                        :
+                        <button className="btn btn-warning col-4" onClick={(e) => setUserStatus(user.email, INACTIVE)}>
+                          Inactive
+                        </button>
+                      }
                     </OverlayTrigger>
                   </td>
                 </tr>

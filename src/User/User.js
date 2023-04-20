@@ -380,7 +380,7 @@ export default function User() {
                             </tr>
                         </thead>
                         <tbody style={{ textAlign: 'center' }}>
-                            {fileDatas ? (
+                            {fileDatas && fileDatas.length > 0 ? (
                                 fileDatas.map((file) =>
                                     <tr key={file.timeStamp}>
                                         <td>{file.fileName}</td>
@@ -398,7 +398,7 @@ export default function User() {
                                 )
                             ) : (
                                 <tr>
-                                    <td colSpan="4">Something went wrong. Please try again later.</td>
+                                    <td colSpan="5">No file is uploaded, Please upload a file</td>
                                 </tr>
                             )}
                         </tbody>

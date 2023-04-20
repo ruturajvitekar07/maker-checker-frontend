@@ -75,7 +75,7 @@ class AdminAppService {
 
     setStatusInactive(statusRequest, header) {
         // http://localhost:8080/admin/change-status
-        return axios.get(BASE_REST_API_URL + '/admin/change-status', statusRequest, header)
+        return axios.post(BASE_REST_API_URL + '/admin/change-status', statusRequest, header)
     }
 }
 export default new AdminAppService();

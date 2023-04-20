@@ -167,7 +167,8 @@ export default function Admin() {
 
   const setUserStatus = async (userEmail, status) => {
     const newStatus = status === ACTIVE ? ACTIVE : INACTIVE; // Get the new status
-
+    console.log(userEmail);
+    console.log(status);
     const statusRequest = { userEmail, status };
     try {
       const response = await Swal.fire({
@@ -180,6 +181,7 @@ export default function Admin() {
       });
 
       if (response.isConfirmed) {
+        console.log(header);
         const result = await AdminAppService.setStatusInactive(statusRequest, header);
 
         if (result.status === 200) {
@@ -330,38 +332,50 @@ export default function Admin() {
   }, [])
 
   return (
-    <div>
+    <div className=''>
       <AdminNavbar username={username} onLogout={handleLogout} />
-      <div className='mt-4 col-10 offset-1'>
+      <div className='container-fluid mt-4 px-5'>
         <table className="table table-striped">
-          <thead>
+          <thead style={{ textAlign: "center" }}>
             <tr>
               <th className="table-primary">Name</th>
               <th className="table-primary">Email</th>
+              <th className="table-primary">Mobile</th>
               <th className="table-primary">Role</th>
+              <th className="table-primary">Status</th>
+              <th className="table-primary">Created Time</th>
               <th className="table-primary">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style={{ textAlign: "center" }}>
             {
               users.map((user) =>
                 <tr key={user.email}>
                   <td>{user.firstName} {user.lastName}</td>
                   <td>{user.email}</td>
+                  <td>{user.mobileNumber}</td>
                   <td>{user.role}</td>
+                  <td>{user.accountStatus}</td>
+                  <td>{user.accountCreatedOn}</td>
                   <td>
                     <button className='btn btn-danger col-4' onClick={(e) => deleteUser(user.email)}>Delete</button> &nbsp;
                     <OverlayTrigger placement="right" overlay={tooltip(user.status)}>
                       {user.status === ACTIVE ?
-                        <button className="btn btn-success col-4" onClick={(e) => setUserStatus(user.email, ACTIVE)}>
+                        <button className="btn btn-success col-5" onClick={(e) => setUserStatus(user.email, ACTIVE)}>
                           Active
                         </button>
                         :
-                        <button className="btn btn-warning col-4" onClick={(e) => setUserStatus(user.email, INACTIVE)}>
+                        <button className="btn btn-warning col-5" onClick={(e) => setUserStatus(user.email, INACTIVE)}>
                           Inactive
                         </button>
                       }
                     </OverlayTrigger>
+                    {/* <button
+                      className={`btn ${user.status === ACTIVE ? 'btn-success' : 'btn-warning'} col-5`}
+                      onClick={(e) => setUserStatus(user.email, user.status === ACTIVE ? INACTIVE : ACTIVE)}
+                    >
+                      {user.status === ACTIVE ? 'Active' : 'Inactive'}
+                    </button> */}
                   </td>
                 </tr>
               )

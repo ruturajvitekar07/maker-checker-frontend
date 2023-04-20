@@ -28,13 +28,15 @@ export default function History() {
         }
       })
       .catch((error) => {
+        console.log(error.response.data.message);
         if (error.response && error.response.status === 400) {
+
           Swal.fire({
             icon: 'Error',
             title: 'Error',
             toast: true,
             position: 'top-end',
-            text: 'Unable to retrieve history data',
+            text: error.response.data.message,
             timer: 3000
           });
         }
@@ -47,7 +49,7 @@ export default function History() {
 
   return (
     <div className="">
-      <AdminNavbar username={username}/>
+      <AdminNavbar username={username} />
       <div className='mt-3'>
         <h2 style={{ textAlign: 'center' }}>History</h2>
       </div>
@@ -65,7 +67,7 @@ export default function History() {
             </tr>
           </thead>
           <tbody>
-            {
+            {history && history.length > 0 ?
               history.map((hdata) =>
                 <tr key={hdata.timestamp}>
                   <td>{hdata.fileName}</td>
@@ -75,7 +77,12 @@ export default function History() {
                   <td>{hdata.userName}</td>
                   <td>{hdata.roleOfChecker}</td>
                 </tr>
-              )
+              ) :
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", fontWeight: "bold" }}>
+                  History is not present
+                </td>
+              </tr>
             }
           </tbody>
         </table>

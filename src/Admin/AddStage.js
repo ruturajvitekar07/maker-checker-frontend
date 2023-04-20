@@ -172,7 +172,7 @@ export default function AddStage() {
             <AdminNavbar username={username} />
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
-                    <div className="card-body">
+                    <div className="card-body mb-3">
                         <h2 className="card-title mb-4" style={{ textAlign: 'center' }}>Add Stage</h2>
                         <hr />
                         <form onSubmit={addStage}>
@@ -231,7 +231,7 @@ export default function AddStage() {
                                     title={"If you are entering the last stage, you can skip the next stage"}
                                 >
                                 </input>
-                                <span style={{ color: 'red', marginLeft: '20px', fontSize: '13px' }}>If you are entering the last stage, you can skip the next stage</span>
+                                <span style={{ color: 'red', marginLeft: '10px', fontSize: '13px' }}>If you are entering the last stage, you can skip the next stage</span>
                             </div>
 
                             <div>

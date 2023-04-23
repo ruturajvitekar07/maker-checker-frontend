@@ -32,7 +32,7 @@ export default function Approver() {
         setStatus(APPROVED);
         setFileName(file1);
     };
-    
+
     const [show1, setShow1] = useState(false);
     const handleClose1 = () => setShow1(false);
     const handleShow1 = (file1) => {
@@ -45,16 +45,16 @@ export default function Approver() {
     const [isSwalOpen, setIsSwalOpen] = useState(false);
 
     const { getRemainingTime, reset } = useIdleTimer({
-        timeout: 1000 * 60 * 10,     // 5 minutes
+        timeout: 1000 * 60 * 10,
         onIdle: () => {
             console.log('User is idle');
-            handleLogout();     // call the logout function when the user is idle
+            handleLogout();
         },
     });
 
     const handleOnIdle = () => {
         const remainingTime = getRemainingTime();
-        if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {           // show a warning message to the user when they have 1 minute left before being logged out
+        if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {
             MySwal.fire({
                 title: 'You have been idle for a while!',
                 text: `You will be logged out in ${remainingTime / 1000} seconds`,
@@ -67,7 +67,7 @@ export default function Approver() {
                 if (result.isConfirmed) {
                     console.log('User wants to stay');
                     setIsSwalOpen(false);
-                    reset(); // reset the idle timer when the user wants to stay logged in
+                    reset();
                 } else {
                     handleLogout();
                 }
@@ -79,7 +79,7 @@ export default function Approver() {
     const handleLogout = () => {
         setIsLoggedIn(false);
         console.log('User has been logged out');
-        reset();                               // reset the idle timer when the user logs out
+        reset();
         sessionStorage.clear();
         localStorage.clear();
         navigate('/login')
@@ -89,10 +89,10 @@ export default function Approver() {
         let intervalId;
         if (isLoggedIn) {
             intervalId = setInterval(() => {
-                handleOnIdle(); // check for idle state every second
+                handleOnIdle();
             }, 1000);
         }
-        return () => clearInterval(intervalId); // clear the interval when the component unmounts or when the user logs out
+        return () => clearInterval(intervalId);
     }, [isLoggedIn]);
 
     const getPendigFileLists = () => {
@@ -208,7 +208,6 @@ export default function Approver() {
     };
 
     const fileDecision = (fileName) => {
-
         if (!comment) {
             Swal.fire({
                 icon: "warning",

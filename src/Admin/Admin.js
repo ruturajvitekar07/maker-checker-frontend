@@ -37,16 +37,16 @@ export default function Admin() {
   );
 
   const { getRemainingTime, reset } = useIdleTimer({
-    timeout: 1000 * 60 * 10,     // 10 minutes
+    timeout: 1000 * 60 * 5,
     onIdle: () => {
       console.log('User is idle');
-      handleLogout();     // call the logout function when the user is idle
+      handleLogout();
     },
   });
 
   const handleOnIdle = () => {
     const remainingTime = getRemainingTime();
-    if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {           // show a warning message to the user when they have 1 minute left before being logged out
+    if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {
       MySwal.fire({
         title: 'You have been idle for a while!',
         text: `You will be logged out in ${remainingTime / 1000} seconds`,
@@ -59,7 +59,7 @@ export default function Admin() {
         if (result.isConfirmed) {
           console.log('User wants to stay');
           setIsSwalOpen(false);
-          reset(); // reset the idle timer when the user wants to stay logged in
+          reset();
         } else {
           handleLogout();
         }
@@ -71,7 +71,7 @@ export default function Admin() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     console.log('User has been logged out');
-    reset();                               // reset the idle timer when the user logs out
+    reset();
     sessionStorage.clear();
     localStorage.clear();
     navigate('/login')
@@ -81,10 +81,10 @@ export default function Admin() {
     let intervalId;
     if (isLoggedIn) {
       intervalId = setInterval(() => {
-        handleOnIdle(); // check for idle state every second
+        handleOnIdle();
       }, 1000);
     }
-    return () => clearInterval(intervalId); // clear the interval when the component unmounts or when the user logs out
+    return () => clearInterval(intervalId);
   }, [isLoggedIn]);
 
   const getUserList = () => {
@@ -166,17 +166,14 @@ export default function Admin() {
   }
 
   const setUserStatus = async (userEmail, status) => {
-    const newStatus = status === ACTIVE ? ACTIVE : INACTIVE; // Get the new status
-    console.log(userEmail);
-    console.log(status);
     const statusRequest = { userEmail, status };
     try {
       const response = await Swal.fire({
         icon: 'warning',
         title: 'Are you sure?',
-        text: `Do you want to change the status of ${userEmail} to ${newStatus}?`,
+        text: `Do you want to change the status of ${userEmail} to ${status}?`,
         showCancelButton: true,
-        confirmButtonText: `Yes, change it to ${newStatus}!`,
+        confirmButtonText: `Yes, change it to ${status}!`,
         cancelButtonText: 'No, cancel!',
       });
 
@@ -189,7 +186,7 @@ export default function Admin() {
           Swal.fire({
             icon: 'success',
             title: 'Status Changed!',
-            text: `${userEmail}'s status has been changed to ${newStatus}.`,
+            text: `${userEmail}'s status has been changed to ${status}.`,
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -199,7 +196,7 @@ export default function Admin() {
           Swal.fire({
             icon: 'warning',
             title: 'Oops...',
-            text: `Something went wrong! Failed to change the user status to ${newStatus}.`,
+            text: `Something went wrong! Failed to change the user status to ${status}.`,
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -212,7 +209,7 @@ export default function Admin() {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: `Bad Request! Failed to change the user status to ${newStatus}.`,
+          text: `Bad Request! Failed to change the user status to ${status}.`,
           toast: true,
           position: 'top-end',
           showConfirmButton: false,
@@ -221,60 +218,6 @@ export default function Admin() {
       }
     }
   }
-
-
-  // const setUserStatus = async (userEmail, status) => {
-  //   const statusRequest = { userEmail, status };
-  //   try {
-  //     const response = await Swal.fire({
-  //       icon: 'warning',
-  //       title: 'Are you sure ?',
-  //       text: `Do you want to change the ${userEmail} status ?`,
-  //       showCancelButton: true,
-  //       confirmButtonText: 'Yes, change it!',
-  //       cancelButtonText: 'No, cancel!',
-  //     });
-
-  //     if (response.isConfirmed) {
-  //       const result = await AdminAppService.setStatusInactive(statusRequest, header);
-  //       if (result.status === 200) {
-  //         getUserList();
-  //         Swal.fire({
-  //           icon: 'success',
-  //           title: 'Status Changed!',
-  //           text: `${userEmail}'s status has been changed to ${status}.`,
-  //           toast: true,
-  //           position: 'top-end',
-  //           showConfirmButton: false,
-  //           timer: 1500,
-  //         });
-  //       } else {
-  //         Swal.fire({
-  //           icon: 'warning',
-  //           title: 'Oops...',
-  //           text: 'Something went wrong! Failed to change the user status to inactive',
-  //           toast: true,
-  //           position: 'top-end',
-  //           showConfirmButton: false,
-  //           timer: 1500,
-  //         });
-  //       }
-  //     }
-  //   } catch (error) {
-  //     if (error.response && error.response.status === 400) {
-  //       Swal.fire({
-  //         icon: 'error',
-  //         title: 'Oops...',
-  //         text: 'Bad Request! Failed to change the user status to inactive',
-  //         toast: true,
-  //         position: 'top-end',
-  //         showConfirmButton: false,
-  //         timer: 1500,
-  //       });
-  //     }
-  //   }
-  // }
-
 
   const deleteUser = async (username) => {
     try {
@@ -359,23 +302,25 @@ export default function Admin() {
                   <td>{user.accountCreatedOn}</td>
                   <td>
                     <button className='btn btn-danger col-4' onClick={(e) => deleteUser(user.email)}>Delete</button> &nbsp;
-                    <OverlayTrigger placement="right" overlay={tooltip(user.status)}>
-                      {user.status === ACTIVE ?
-                        <button className="btn btn-success col-5" onClick={(e) => setUserStatus(user.email, ACTIVE)}>
-                          Active
-                        </button>
-                        :
-                        <button className="btn btn-warning col-5" onClick={(e) => setUserStatus(user.email, INACTIVE)}>
-                          Inactive
-                        </button>
+                    <OverlayTrigger placement="bottom" overlay={tooltip(user.accountStatus)}>
+                      {
+                        user.accountStatus === ACTIVE ? (
+                          <button
+                            className="btn btn-warning col-5"
+                            onClick={(e) => setUserStatus(user.email, INACTIVE)}
+                          >
+                            Inactive
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-success col-5"
+                            onClick={(e) => setUserStatus(user.email, ACTIVE)}
+                          >
+                            Active
+                          </button>
+                        )
                       }
                     </OverlayTrigger>
-                    {/* <button
-                      className={`btn ${user.status === ACTIVE ? 'btn-success' : 'btn-warning'} col-5`}
-                      onClick={(e) => setUserStatus(user.email, user.status === ACTIVE ? INACTIVE : ACTIVE)}
-                    >
-                      {user.status === ACTIVE ? 'Active' : 'Inactive'}
-                    </button> */}
                   </td>
                 </tr>
               )

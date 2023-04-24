@@ -1,9 +1,12 @@
 
 import React from "react";
 import Navbars from "../Navbars/Navbars";
-import Carousel from '../Home/Carousel'
+import Carousel from '../Home/Carousel';
+import { useAuditLogging } from '../Utility/useAuditLogging';
 
 export default function Home() {
+
+  const [triggerAction, setUser] = useAuditLogging('Visited the Home page');
 
   return (
     <div>

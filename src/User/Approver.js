@@ -9,10 +9,14 @@ import Swal from "sweetalert2";
 import { APPROVED, DECLINED, Workflow_CSV, Workflow_PDF } from "../Constants/constants";
 import { useIdleTimer } from 'react-idle-timer';
 import withReactContent from 'sweetalert2-react-content';
+import { useTracking } from 'react-tracking';
 
 const MySwal = withReactContent(Swal);
 
 export default function Approver() {
+
+    const { trackEvent } = useTracking();
+
     const [comment, setComment] = useState("");
     const [fileData, setFileData] = useState([]);
     const [role, setRole] = useState("");
@@ -77,6 +81,13 @@ export default function Approver() {
     };
 
     const handleLogout = () => {
+        trackEvent({
+            component: "Approver",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
         setIsLoggedIn(false);
         console.log('User has been logged out');
         reset();
@@ -352,7 +363,17 @@ export default function Approver() {
                                             <button
                                                 className="btn btn-secondary"
                                                 type="submit"
-                                                onClick={() => downloadFile(file.fileName)}
+                                                // onClick={() => downloadFile(file.fileName)}
+                                                onClick={() => {
+                                                    downloadFile(file.fileName);
+                                                    trackEvent({
+                                                        component: "Approver",
+                                                        event: "Clicked on download file button",
+                                                        user: username,
+                                                        time: new Date().toLocaleString(),
+                                                        status: "Success"
+                                                    });
+                                                }}
                                             >
                                                 Download
                                             </button>
@@ -361,7 +382,17 @@ export default function Approver() {
                                             <Button
                                                 name="Approved"
                                                 variant="success"
-                                                onClick={(e) => handleShow(file.fileName)}
+                                                // onClick={(e) => handleShow(file.fileName)}
+                                                onClick={(e) => {
+                                                    handleShow(file.fileName);
+                                                    trackEvent({
+                                                        component: "Approver",
+                                                        event: "Clicked on approve button",
+                                                        user: username,
+                                                        time: new Date().toLocaleString(),
+                                                        status: "Success"
+                                                    });
+                                                }}
                                             >
                                                 Approve
                                             </Button>
@@ -388,12 +419,34 @@ export default function Approver() {
                                                     </Form>
                                                 </Modal.Body>
                                                 <Modal.Footer>
-                                                    <Button variant="secondary" onClick={handleClose}>
+                                                    <Button variant="secondary"
+                                                        // onClick={handleClose}
+                                                        onClick={() => {
+                                                            handleClose();
+                                                            trackEvent({
+                                                                component: "Approver",
+                                                                event: "Clicked on approve file cancel button",
+                                                                user: username,
+                                                                time: new Date().toLocaleString(),
+                                                                status: "Success"
+                                                            });
+                                                        }}
+                                                    >
                                                         Close
                                                     </Button>
                                                     <Button
                                                         variant="primary"
-                                                        onClick={() => fileDecision(fileName)}
+                                                        // onClick={() => fileDecision(fileName)}
+                                                        onClick={() => {
+                                                            fileDecision(fileName);
+                                                            trackEvent({
+                                                                component: "Approver",
+                                                                event: "Clicked on approve file button with reason",
+                                                                user: username,
+                                                                time: new Date().toLocaleString(),
+                                                                status: "Success"
+                                                            });
+                                                        }}
                                                     >
                                                         Approve
                                                     </Button>
@@ -403,7 +456,17 @@ export default function Approver() {
                                             <Button
                                                 name="Declined"
                                                 variant="danger"
-                                                onClick={(e) => handleShow1(file.fileName)}
+                                                // onClick={(e) => handleShow1(file.fileName)}
+                                                onClick={(e) => {
+                                                    handleShow1(file.fileName);
+                                                    trackEvent({
+                                                        component: "Approver",
+                                                        event: "Clicked on approve button",
+                                                        user: username,
+                                                        time: new Date().toLocaleString(),
+                                                        status: "Success"
+                                                    });
+                                                }}
                                             >
                                                 Decline
                                             </Button>
@@ -430,12 +493,33 @@ export default function Approver() {
                                                     </Form>
                                                 </Modal.Body>
                                                 <Modal.Footer>
-                                                    <Button variant="secondary" onClick={handleClose1}>
+                                                    <Button variant="secondary"
+                                                        //  onClick={handleClose1}
+                                                        onClick={() => {
+                                                            handleClose1();
+                                                            trackEvent({
+                                                                component: "Approver",
+                                                                event: "Clicked on decline file cancel button",
+                                                                user: username,
+                                                                time: new Date().toLocaleString(),
+                                                                status: "Success"
+                                                            });
+                                                        }}>
                                                         Close
                                                     </Button>
                                                     <Button
                                                         variant="primary"
-                                                        onClick={() => fileDecision(fileName)}
+                                                        // onClick={() => fileDecision(fileName)}
+                                                        onClick={() => {
+                                                            fileDecision(fileName);
+                                                            trackEvent({
+                                                                component: "Approver",
+                                                                event: "Clicked on decline file button with reason",
+                                                                user: username,
+                                                                time: new Date().toLocaleString(),
+                                                                status: "Success"
+                                                            });
+                                                        }}
                                                     >
                                                         Decline
                                                     </Button>

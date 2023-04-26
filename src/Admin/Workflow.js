@@ -6,8 +6,12 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useTracking } from 'react-tracking';
+
 
 export default function Workflow() {
+
+    const { trackEvent } = useTracking();
 
     const [version, setVersion] = useState('')
     const [workflows, setWorkflows] = useState([])
@@ -191,9 +195,32 @@ export default function Workflow() {
                                             </div>
 
                                             <div className='mt-3'>
-                                                <button className="btn btn-success" onClick={(e) => addWorkflow(e)}>Submit</button>
+                                                <button className="btn btn-success"
+                                                    onClick={(e) => {
+                                                        addWorkflow(e);
+                                                        trackEvent({
+                                                            component: "Workflow",
+                                                            event: "Clicked on workflow add submit button",
+                                                            user: username,
+                                                            time: new Date().toLocaleString(),
+                                                            status: "Success"
+                                                        });
+                                                    }}
+                                                >
+                                                    Submit
+                                                </button>
                                                 &nbsp;&nbsp;
-                                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                                                <Link to="/admin" className="btn btn-danger"
+                                                    onClick={() =>
+                                                        trackEvent({
+                                                            component: 'Workflow',
+                                                            event: 'Add workflow form cancel button clicked',
+                                                            user: username,
+                                                            time: new Date().toLocaleString(),
+                                                            status: 'Success'
+                                                        })}>
+                                                    Cancel
+                                                </Link>
                                             </div>
                                         </form>
                                     </div>
@@ -204,7 +231,18 @@ export default function Workflow() {
                 </div>
                 <div className='row mt-3'>
                     <div className='col-6 offset-3 text-center'>
-                        <button className="btn btn-primary mb-2" onClick={() => setShowTable(!showTable)}>
+                        <button className="btn btn-primary mb-2"
+                            onClick={(e) => {
+                                setShowTable(!showTable);
+                                trackEvent({
+                                    component: "Workflow",
+                                    event: "Clicked on hide or view workflows button",
+                                    user: username,
+                                    time: new Date().toLocaleString(),
+                                    status: "Success"
+                                });
+                            }}
+                        >
                             {showTable ? "Hide Workflows" : "View Workflows"}
                         </button>
                         {showTable && (

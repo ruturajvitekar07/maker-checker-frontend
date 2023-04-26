@@ -5,8 +5,13 @@ import AdminAppService from "../Service/AdminAppService";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import AdminNavbar from "../Navbars/AdminNavbar";
+import { useTracking } from 'react-tracking';
+
 
 export default function ViewStage() {
+
+  const { trackEvent } = useTracking();
+
   const [workFlows, setWorkFlows] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
@@ -115,6 +120,14 @@ export default function ViewStage() {
             onChange={(event) => {
               setSelectedWorkflow(event.target.value);
             }}
+            onClick={() =>
+              trackEvent({
+                component: 'ViewStage',
+                event: `Stage : ${selectedWorkflow} is selected from dropdown`,
+                user: username,
+                time: new Date().toLocaleString(),
+                status: 'Success'
+              })}
           >
             <option defaultValue={"Select a workflow"} disabled>
               Select a workflow

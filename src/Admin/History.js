@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom'
 import AdminAppService from '../Service/AdminAppService'
 import Swal from 'sweetalert2';
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useTracking } from 'react-tracking';
 
 export default function History() {
+
+  const { trackEvent } = useTracking();
   const [history, setHistory] = useState([])
   const username = sessionStorage.getItem("username");
   const localStorageToken = sessionStorage.getItem("access_token");

@@ -8,12 +8,15 @@ import Swal from 'sweetalert2';
 import { UPLOAD_CSV, UPLOAD_PDF } from '../Constants/constants'
 import { useIdleTimer } from 'react-idle-timer';
 import withReactContent from 'sweetalert2-react-content';
+import { useTracking } from 'react-tracking';
 
 const MySwal = withReactContent(Swal);
 
 export default function User() {
 
     const navigate = useNavigate()
+    const { trackEvent } = useTracking();
+
     const [fileDatas, setFileDatas] = useState([])
     const [currentStatus, setCurrentStatus] = useState([])
     const [file, setFile] = useState(null);
@@ -57,6 +60,13 @@ export default function User() {
     };
 
     const handleLogout = () => {
+        trackEvent({
+            component: "User",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
         setIsLoggedIn(false);
         console.log('User has been logged out');
         reset(); // reset the idle timer when the user logs out
@@ -361,8 +371,36 @@ export default function User() {
                                 <label htmlFor="formFile" className="form-label">Upload File</label>
                                 <input className="form-control" type="file" onChange={handleFileInput} id="formFile" />
                                 <div className='mt-2' style={{ display: 'flex', gap: '16px' }}>
-                                    <button className='btn btn-success' onClick={handleSubmitPdf} >Upload PDF</button>
-                                    <button className='btn btn-success' onClick={handleSubmitCsv} >Upload CSV</button>
+                                    <button className='btn btn-success'
+                                        // onClick={handleSubmitPdf} 
+                                        onClick={() => {
+                                            handleSubmitPdf();
+                                            trackEvent({
+                                                component: "User",
+                                                event: "Clicked on upload pdf file button",
+                                                user: username,
+                                                time: new Date().toLocaleString(),
+                                                status: "Success"
+                                            });
+                                        }}
+                                    >
+                                        Upload PDF
+                                    </button>
+                                    <button className='btn btn-success'
+                                        // onClick={handleSubmitCsv} 
+                                        onClick={() => {
+                                            handleSubmitCsv();
+                                            trackEvent({
+                                                component: "User",
+                                                event: "Clicked on upload csv file button",
+                                                user: username,
+                                                time: new Date().toLocaleString(),
+                                                status: "Success"
+                                            });
+                                        }}
+                                    >
+                                        Upload CSV
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -389,7 +427,19 @@ export default function User() {
                                         <td>{file.nextStage}</td>
                                         <td>
                                             <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                                                <button className="btn bg-transparent" style={{ padding: 0, margin: 0 }} onClick={(e) => { ViewHistory(file.fileName) }}>
+                                                <button className="btn bg-transparent" style={{ padding: 0, margin: 0 }}
+                                                    // onClick={(e) => { ViewHistory(file.fileName) }}
+                                                    onClick={(e) => {
+                                                        ViewHistory(file.fileName);
+                                                        trackEvent({
+                                                            component: "User",
+                                                            event: "Clicked on history i button",
+                                                            user: username,
+                                                            time: new Date().toLocaleString(),
+                                                            status: "Success"
+                                                        });
+                                                    }}
+                                                >
                                                     <i className="bi bi-info-circle-fill" style={{ fontSize: '21px' }}></i>
                                                 </button>
                                             </OverlayTrigger>

@@ -5,8 +5,12 @@ import Swal from 'sweetalert2';
 import AdminAppService from '../Service/AdminAppService'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useTracking } from 'react-tracking';
+
 
 export default function Signup() {
+
+    const { trackEvent } = useTracking();
 
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -122,12 +126,12 @@ export default function Signup() {
 
     return (
         <div className="">
-            <AdminNavbar username={username}/>
+            <AdminNavbar username={username} />
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">
                         <h2 className="card-title mb-4" style={{ textAlign: 'center' }}>Registeration</h2>
-                        <hr/>
+                        <hr />
                         <form>
                             <div className="form-group mb-2">
                                 <label htmlFor='firstName' className="form-label"> Firstname : </label>
@@ -233,9 +237,31 @@ export default function Signup() {
                                 </input>
                             </div>
                             <div className="mt-3">
-                                <button className="btn btn-success" onClick={(e) => createUser(e)} >Sign Up</button>
+                                <button className="btn btn-success"
+                                    onClick={(e) => {
+                                        createUser(e);
+                                        trackEvent({
+                                            component: "Signup",
+                                            event: "Clicked on user signup button",
+                                            user: username,
+                                            time: new Date().toLocaleString(),
+                                            status: "Success"
+                                        });
+                                    }}>
+                                    Sign Up
+                                </button>
                                 &nbsp;&nbsp;
-                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                                <Link to="/admin" className="btn btn-danger"
+                                    onClick={() =>
+                                        trackEvent({
+                                            component: 'Signup',
+                                            event: 'Clicked on user signup cancel button',
+                                            user: username,
+                                            time: new Date().toLocaleString(),
+                                            status: 'Success'
+                                        })}>
+                                    Cancel
+                                </Link>
                             </div>
                         </form>
                     </div>

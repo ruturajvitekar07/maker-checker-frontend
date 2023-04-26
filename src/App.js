@@ -16,6 +16,7 @@ import History from './Admin/History';
 import Workflow from './Admin/Workflow';
 import NewFooter from './Navbars/NewFooter';
 import Workflows from './Admin/Workflows';
+import track from 'react-tracking';
 
 function App() {
 
@@ -43,4 +44,22 @@ function App() {
   );
 }
 
-export default App;
+const TrackedApp = track({
+  // Your tracking data object goes here
+  app: 'Macker-Checker',
+})(
+  App
+);
+
+const TrackedAndDispatchedApp = track(
+  { app: 'Macker-Checker' },
+  {
+    // Your dispatch function goes here
+    dispatch: (data) => {
+      console.log(data);
+    },
+  }
+)(App);
+
+export default TrackedAndDispatchedApp;
+// export default App;

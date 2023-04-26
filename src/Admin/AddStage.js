@@ -6,8 +6,13 @@ import Swal from 'sweetalert2';
 import { TRUE, FALSE } from '../Constants/constants';
 import { useParams } from "react-router-dom";
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useTracking } from 'react-tracking';
+
 
 export default function AddStage() {
+
+    const { trackEvent } = useTracking();
+    
     const [no, setNo] = useState('')
     const [role, setRole] = useState('')
     const [nextStage, setNextStage] = useState('')
@@ -94,6 +99,13 @@ export default function AddStage() {
     };
 
     const addStage = async () => {
+        // trackEvent({
+        //     component: "HookButton",
+        //     event: "HookButton-Clicked",
+        //     user: username,
+        //     time: new Date().toLocaleString(),
+        //     status: "Success"
+        //   })
         const notificationDto = { email, mobileNo }
         if (!notificationDto.email && !notificationDto.mobileNo) {
             Swal.fire({
@@ -258,9 +270,29 @@ export default function AddStage() {
                             </div>
 
                             <div className='mt-3'>
-                                <button type="submit" className="btn btn-success">Submit</button>
+                                <button type="submit" className="btn btn-success"
+                                    onClick={() =>
+                                        trackEvent({
+                                            component: 'History',
+                                            event: 'Add stage form submit button clicked',
+                                            user: username,
+                                            time: new Date().toLocaleString(),
+                                            status: 'Success'
+                                        })}>
+                                    Submit
+                                </button>
                                 &nbsp;&nbsp;
-                                <Link to="/admin" className="btn btn-danger">Cancel</Link>
+                                <Link to="/admin" className="btn btn-danger"
+                                    onClick={() =>
+                                        trackEvent({
+                                            component: 'AddStage',
+                                            event: 'Add stage form cancel button clicked',
+                                            user: username,
+                                            time: new Date().toLocaleString(),
+                                            status: 'Success'
+                                        })}>
+                                    Cancel
+                                </Link>
                             </div>
                         </form>
                     </div>

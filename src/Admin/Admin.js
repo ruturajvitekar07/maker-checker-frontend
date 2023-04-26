@@ -8,11 +8,15 @@ import AdminNavbar from '../Navbars/AdminNavbar';
 import { useIdleTimer } from 'react-idle-timer';
 import withReactContent from 'sweetalert2-react-content';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { ACTIVE, INACTIVE } from '../Constants/constants'
+import { ACTIVE, INACTIVE } from '../Constants/constants';
+import { useTracking } from 'react-tracking';
+
 
 const MySwal = withReactContent(Swal);
 
 export default function Admin() {
+
+  const { trackEvent } = useTracking();
 
   const [users, setUsers] = useState([])
   const [status, setStatus] = useState("")
@@ -69,6 +73,13 @@ export default function Admin() {
   };
 
   const handleLogout = () => {
+    trackEvent({
+      component: "Admin",
+      event: "Clicked on logout button",
+      user: username,
+      time: new Date().toLocaleString(),
+      status: "Success"
+    });
     setIsLoggedIn(false);
     console.log('User has been logged out');
     reset();
@@ -301,20 +312,50 @@ export default function Admin() {
                   <td>{user.accountStatus}</td>
                   <td>{user.accountCreatedOn}</td>
                   <td>
-                    <button className='btn btn-danger col-4' onClick={(e) => deleteUser(user.email)}>Delete</button> &nbsp;
+                    <button className='btn btn-danger col-4'
+                      onClick={(e) => {
+                        deleteUser(user.email);
+                        trackEvent({
+                          component: "Admin",
+                          event: "Clicked on delete user button",
+                          user: username,
+                          time: new Date().toLocaleString(),
+                          status: "Success"
+                        });
+                      }}>
+                      Delete
+                    </button> &nbsp;
                     <OverlayTrigger placement="bottom" overlay={tooltip(user.accountStatus)}>
                       {
                         user.accountStatus === ACTIVE ? (
                           <button
                             className="btn btn-warning col-5"
-                            onClick={(e) => setUserStatus(user.email, INACTIVE)}
+                            onClick={(e) => {
+                              setUserStatus(user.email, INACTIVE);
+                              trackEvent({
+                                component: "Admin",
+                                event: "Clicked on user inactive button",
+                                user: username,
+                                time: new Date().toLocaleString(),
+                                status: "Success"
+                              });
+                            }}
                           >
                             Inactive
                           </button>
                         ) : (
                           <button
                             className="btn btn-success col-5"
-                            onClick={(e) => setUserStatus(user.email, ACTIVE)}
+                            onClick={(e) => {
+                              setUserStatus(user.email, ACTIVE);
+                              trackEvent({
+                                component: "Admin",
+                                event: "Clicked on user active button",
+                                user: username,
+                                time: new Date().toLocaleString(),
+                                status: "Success"
+                              });
+                            }}
                           >
                             Active
                           </button>

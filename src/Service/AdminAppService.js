@@ -77,5 +77,15 @@ class AdminAppService {
         // http://localhost:8080/admin/change-status
         return axios.post(BASE_REST_API_URL + '/admin/change-status', statusRequest, header)
     }
+
+    getLoginLogoutDetails(username, header) {
+        // http://localhost:8080/admin/get-login-logout-info/abd@gmail.com
+        return axios.get(BASE_REST_API_URL + '/admin/get-login-logout-info/' + username, header)
+    }
+
+    getLoginFailedDetails(username, header){
+        // http://localhost:8080/admin/get-failed-login-info/abd@gmail.com
+        return axios.get(BASE_REST_API_URL + '/admin/get-failed-login-info/' + username, header)
+    }
 }
 export default new AdminAppService();

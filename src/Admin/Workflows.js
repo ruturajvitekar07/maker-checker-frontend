@@ -7,8 +7,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
 import { Link } from "react-router-dom";
 import AdminNavbar from '../Navbars/AdminNavbar';
+import { useTracking } from 'react-tracking';
+
 
 export default function Workflows() {
+
+    const { trackEvent } = useTracking();
 
     const [workflows, setWorkflows] = useState([])
     const navigate = useNavigate()

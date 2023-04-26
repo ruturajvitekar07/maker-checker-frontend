@@ -3,6 +3,11 @@ const BASE_REST_API_URL = 'http://localhost:8080';
 
 class UserAppService {
 
+    signoff(header) {
+        // http://localhost:8080/file/logout
+        return axios.get(BASE_REST_API_URL + '/file/logout', header)
+    }
+
     uploadFile(file) {
         // http://localhost:8080/file/upload
         return axios.post(BASE_REST_API_URL + '/file/upload', file)

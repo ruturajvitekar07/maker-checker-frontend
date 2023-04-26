@@ -86,6 +86,13 @@ const NewLogin = () => {
         e.preventDefault();
         const userCredentials = { username, password };
         if (username.length === 0) {
+            trackEvent({
+                component: "Login",
+                event: "Clicked on user login button without username",
+                user: username,
+                time: new Date().toLocaleString(),
+                status: "Failed"
+            });
             Swal.fire({
                 icon: "warning",
                 title: "Error!",
@@ -96,6 +103,13 @@ const NewLogin = () => {
                 timer: 2000,
             });
         } else if (password.length === 0) {
+            trackEvent({
+                component: "Login",
+                event: "Clicked on user login button without password",
+                user: username,
+                time: new Date().toLocaleString(),
+                status: "Failed"
+            });
             Swal.fire({
                 icon: "warning",
                 title: "Error!",
@@ -126,6 +140,13 @@ const NewLogin = () => {
                         sessionStorage["access_token"] = access_token;
                         sessionStorage["username"] = username;
                         sessionStorage["expires_in"] = expires_in;
+                        trackEvent({
+                            component: "Login",
+                            event: "After clicked on user login button",
+                            user: username,
+                            time: new Date().toLocaleString(),
+                            status: "Login Successfull"
+                        });
                         if (username === "ADMIN") navigate("/admin");
                         else if (username !== null) {
                             const localStorageToken = sessionStorage.getItem("access_token");
@@ -137,13 +158,6 @@ const NewLogin = () => {
                                     setIsLoggedIn(true);
                                     setRole(response.data.role);
                                     console.log(isLoggedIn);
-                                    trackEvent({
-                                        component: "Login",
-                                        event: "After clicked on user login button",
-                                        user: username,
-                                        time: new Date().toLocaleString(),
-                                        status: "Login Successfull"
-                                    });
                                 } else if (response.status === 400) {
                                     setFailedAttempts(failedAttempts + 1);
                                     trackEvent({
@@ -356,7 +370,7 @@ const NewLogin = () => {
                                                                     trackEvent({
                                                                         component: "Login",
                                                                         event: "Clicked on user login button",
-                                                                        user: username,
+                                                                        user: 'Unknown',
                                                                         time: new Date().toLocaleString(),
                                                                         status: "Success"
                                                                     });

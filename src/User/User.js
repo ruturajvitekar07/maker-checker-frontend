@@ -67,6 +67,7 @@ export default function User() {
             time: new Date().toLocaleString(),
             status: "Success"
         });
+        UserAppService.signoff(header);
         setIsLoggedIn(false);
         console.log('User has been logged out');
         reset(); // reset the idle timer when the user logs out

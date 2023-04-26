@@ -88,6 +88,7 @@ export default function Approver() {
             time: new Date().toLocaleString(),
             status: "Success"
         });
+        UserAppService.signoff(header);
         setIsLoggedIn(false);
         console.log('User has been logged out');
         reset();

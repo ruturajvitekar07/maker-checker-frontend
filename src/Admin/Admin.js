@@ -11,7 +11,6 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ACTIVE, INACTIVE } from '../Constants/constants';
 import { useTracking } from 'react-tracking';
 
-
 const MySwal = withReactContent(Swal);
 
 export default function Admin() {
@@ -41,7 +40,7 @@ export default function Admin() {
   );
 
   const { getRemainingTime, reset } = useIdleTimer({
-    timeout: 1000 * 60 * 5,
+    timeout: 1000 * 60 * 10,
     onIdle: () => {
       console.log('User is idle');
       handleLogout();

@@ -17,6 +17,7 @@ import Workflow from './Admin/Workflow';
 import NewFooter from './Navbars/NewFooter';
 import Workflows from './Admin/Workflows';
 import track from 'react-tracking';
+import UserActivity from './Admin/UserActivity';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path='/workflow' element={<Workflow />} />
           <Route path='/login' element={<NewLogin />} />
           <Route path='/workflows' element={<Workflows />} />
+          <Route path="/activity/:user" element={<UserActivity />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

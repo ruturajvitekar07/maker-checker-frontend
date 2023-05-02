@@ -99,13 +99,6 @@ export default function AddStage() {
     };
 
     const addStage = async () => {
-        // trackEvent({
-        //     component: "HookButton",
-        //     event: "HookButton-Clicked",
-        //     user: username,
-        //     time: new Date().toLocaleString(),
-        //     status: "Success"
-        //   })
         const notificationDto = { email, mobileNo }
         if (!notificationDto.email && !notificationDto.mobileNo) {
             Swal.fire({
@@ -150,7 +143,7 @@ export default function AddStage() {
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
-                    timer: 1500
+                    timer: 2500
                 });
                 setNo('')
                 setRole('')

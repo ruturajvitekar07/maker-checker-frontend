@@ -54,5 +54,10 @@ class UserAppService {
         return axios.get(BASE_REST_API_URL + '/file/get-user-workflow-list', header)
     }
 
+    setUsersActivities(trackingData, header) {
+        // http://localhost:8080/file/track-activity
+        return axios.post(BASE_REST_API_URL + '/file/track-activity', trackingData, header)
+    }
+
 }
 export default new UserAppService();

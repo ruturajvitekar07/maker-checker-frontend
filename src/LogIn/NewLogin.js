@@ -367,13 +367,13 @@ const NewLogin = () => {
                                                                 style={{ alignContent: "center" }}
                                                                 onClick={(e) => {
                                                                     onLogin(e);
-                                                                    trackEvent({
-                                                                        component: "Login",
-                                                                        event: "Clicked on user login button",
-                                                                        user: 'Unknown',
-                                                                        time: new Date().toLocaleString(),
-                                                                        status: "Success"
-                                                                    });
+                                                                    // trackEvent({
+                                                                    //     component: "Login",
+                                                                    //     event: "Clicked on user login button",
+                                                                    //     user: 'Unknown',
+                                                                    //     time: new Date().toLocaleString(),
+                                                                    //     status: "Success"
+                                                                    // });
                                                                 }}
                                                             >
                                                                 Login

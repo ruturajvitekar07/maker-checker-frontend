@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTracking } from 'react-tracking';
 
-
 export default function UserNavbar(props) {
 
     // const navigate = useNavigate()

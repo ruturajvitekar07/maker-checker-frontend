@@ -29,9 +29,9 @@ export default function Admin() {
 
   const getTooltipText = (status) => {
     if (status === ACTIVE) {
-      return 'Click to set user as Active';
-    } else {
       return 'Click to set user as Inactive';
+    } else {
+      return 'Click to set user as Active';
     }
   };
 
@@ -101,6 +101,7 @@ export default function Admin() {
     AdminAppService.getUserList(header)
       .then((response) => {
         if (response.status === 200) {
+          console.log(response.data);
           const sortedData = response.data.sort((a, b) => {
             if (a.firstName < b.firstName) {
               return -1;
@@ -229,6 +230,10 @@ export default function Admin() {
     }
   }
 
+  const viewActivities = (user) => {
+    navigate(`/activity/${user}`);
+  }
+
   const deleteUser = async (username) => {
     try {
       const response = await Swal.fire({
@@ -287,7 +292,7 @@ export default function Admin() {
   return (
     <div className=''>
       <AdminNavbar username={username} onLogout={handleLogout} />
-      <div className='container-fluid mt-4 px-5'>
+      <div className='mt-4 px-5'>
         <table className="table table-striped">
           <thead style={{ textAlign: "center" }}>
             <tr>
@@ -301,7 +306,7 @@ export default function Admin() {
             </tr>
           </thead>
           <tbody style={{ textAlign: "center" }}>
-            {
+            {users && users.length > 0 ?
               users.map((user) =>
                 <tr key={user.email}>
                   <td>{user.firstName} {user.lastName}</td>
@@ -311,24 +316,11 @@ export default function Admin() {
                   <td>{user.accountStatus}</td>
                   <td>{user.accountCreatedOn}</td>
                   <td>
-                    <button className='btn btn-danger col-4'
-                      onClick={(e) => {
-                        deleteUser(user.email);
-                        trackEvent({
-                          component: "Admin",
-                          event: "Clicked on delete user button",
-                          user: username,
-                          time: new Date().toLocaleString(),
-                          status: "Success"
-                        });
-                      }}>
-                      Delete
-                    </button> &nbsp;
                     <OverlayTrigger placement="bottom" overlay={tooltip(user.accountStatus)}>
                       {
                         user.accountStatus === ACTIVE ? (
                           <button
-                            className="btn btn-warning col-5"
+                            className="btn btn-warning"
                             onClick={(e) => {
                               setUserStatus(user.email, INACTIVE);
                               trackEvent({
@@ -344,7 +336,7 @@ export default function Admin() {
                           </button>
                         ) : (
                           <button
-                            className="btn btn-success col-5"
+                            className="btn btn-success"
                             onClick={(e) => {
                               setUserStatus(user.email, ACTIVE);
                               trackEvent({
@@ -361,9 +353,43 @@ export default function Admin() {
                         )
                       }
                     </OverlayTrigger>
+                    &nbsp;
+                    <button className='btn btn-info'
+                      onClick={(e) => {
+                        viewActivities(user.email);
+                        console.log(user.email);
+                        trackEvent({
+                          component: "Admin",
+                          event: "Clicked on view user activities button",
+                          user: username,
+                          time: new Date().toLocaleString(),
+                          status: "Success"
+                        });
+                      }}>
+                      Activity
+                    </button>
+                    &nbsp;
+                    <button className='btn btn-danger'
+                      onClick={(e) => {
+                        deleteUser(user.email);
+                        trackEvent({
+                          component: "Admin",
+                          event: "Clicked on delete user button",
+                          user: username,
+                          time: new Date().toLocaleString(),
+                          status: "Success"
+                        });
+                      }}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
-              )
+              ) :
+              <tr>
+                <td colSpan="7" style={{ textAlign: "center", fontWeight: "bold" }}>
+                  User is not present, Please add.
+                </td>
+              </tr>
             }
           </tbody>
         </table>

@@ -179,7 +179,7 @@ export default function User() {
     };
 
     const handleSubmitPdf = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('event', UPLOAD_PDF)
@@ -252,7 +252,7 @@ export default function User() {
     };
 
     const handleSubmitCsv = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('event', UPLOAD_CSV)

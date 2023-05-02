@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuditLogging } from '../Utility/useAuditLogging';
 import { useTracking } from 'react-tracking';
 
 

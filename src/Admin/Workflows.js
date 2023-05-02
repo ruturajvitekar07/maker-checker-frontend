@@ -5,7 +5,6 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
-import { Link } from "react-router-dom";
 import AdminNavbar from '../Navbars/AdminNavbar';
 import { useTracking } from 'react-tracking';
 

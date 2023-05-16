@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
-import UserAppService from "../Service/UserAppService";
-import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
-import UserNavbar from "../Navbars/UserNavbar";
-import Swal from "sweetalert2";
-import { APPROVED, DECLINED, Workflow_CSV, Workflow_PDF } from "../Constants/constants";
 import { useIdleTimer } from 'react-idle-timer';
-import withReactContent from 'sweetalert2-react-content';
+import { useNavigate } from "react-router-dom";
 import { useTracking } from 'react-tracking';
-
-const MySwal = withReactContent(Swal);
+import Swal from "sweetalert2";
+import { APPROVED, DECLINED } from "../Constants/constants";
+import useAuth from "../LogIn/auth";
+import UserNavbar from "../Navbars/UserNavbar";
+import UserAppService from "../Service/UserAppService";
+import IdleTimeout from "../Utility/IdleTimeout";
 
 export default function Approver() {
 
     const { trackEvent } = useTracking();
-
     const [comment, setComment] = useState("");
     const [fileData, setFileData] = useState([]);
     const [role, setRole] = useState("");
@@ -26,8 +24,8 @@ export default function Approver() {
     const [stageName, setStageName] = useState("");
     const navigate = useNavigate();
     const username = sessionStorage.getItem("username");
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { Authorization: `Bearer ${localStorageToken}` } };
+    const access_token = sessionStorage.getItem("access_token");
+    const header = { headers: { Authorization: `Bearer ${access_token}` } };
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -45,40 +43,11 @@ export default function Approver() {
         setFileName(file1);
     };
 
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
-    const [isSwalOpen, setIsSwalOpen] = useState(false);
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
 
-    const { getRemainingTime, reset } = useIdleTimer({
-        timeout: 1000 * 60 * 10,
-        onIdle: () => {
-            console.log('User is idle');
-            handleLogout();
-        },
+    const { reset } = useIdleTimer({
+        timeout: 1000 * 60 * 5,
     });
-
-    const handleOnIdle = () => {
-        const remainingTime = getRemainingTime();
-        if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {
-            MySwal.fire({
-                title: 'You have been idle for a while!',
-                text: `You will be logged out in ${remainingTime / 1000} seconds`,
-                showCancelButton: true,
-                confirmButtonText: 'Stay logged in',
-                cancelButtonText: 'Log out',
-                cancelButtonColor: '#dc3545',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    console.log('User wants to stay');
-                    setIsSwalOpen(false);
-                    reset();
-                } else {
-                    handleLogout();
-                }
-            });
-            setIsSwalOpen(true);
-        }
-    };
 
     const handleLogout = () => {
         trackEvent({
@@ -96,16 +65,6 @@ export default function Approver() {
         localStorage.clear();
         navigate('/login')
     };
-
-    useEffect(() => {
-        let intervalId;
-        if (isLoggedIn) {
-            intervalId = setInterval(() => {
-                handleOnIdle();
-            }, 1000);
-        }
-        return () => clearInterval(intervalId);
-    }, [isLoggedIn]);
 
     const getPendigFileLists = () => {
         UserAppService.getUserInfo(header)
@@ -338,11 +297,12 @@ export default function Approver() {
 
     useEffect(() => {
         getPendigFileLists();
-    }, []);
+    });
 
     return (
         <div className="">
-            <UserNavbar username={username} onLogout={handleLogout} />
+            <IdleTimeout/>
+            <UserNavbar role={role} username={username} onLogout={handleLogout} />
             <div className="container-fluid">
                 <div className="col-10 offset-1 mt-4">
                     <table className="table table-striped">

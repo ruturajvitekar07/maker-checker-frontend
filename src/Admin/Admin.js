@@ -1,31 +1,28 @@
-import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom'
-import AdminAppService from '../Service/AdminAppService'
-import Swal from 'sweetalert2';
-import AdminNavbar from '../Navbars/AdminNavbar';
-import { useIdleTimer } from 'react-idle-timer';
-import withReactContent from 'sweetalert2-react-content';
+import { useEffect, useState } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { ACTIVE, INACTIVE } from '../Constants/constants';
+import { useIdleTimer } from 'react-idle-timer';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useTracking } from 'react-tracking';
-
-const MySwal = withReactContent(Swal);
+import Swal from 'sweetalert2';
+import { ACTIVE, INACTIVE } from '../Constants/constants';
+import useAuth from '../LogIn/auth';
+import AdminNavbar from '../Navbars/AdminNavbar';
+import AdminAppService from '../Service/AdminAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function Admin() {
 
   const { trackEvent } = useTracking();
 
   const [users, setUsers] = useState([])
-  const [status, setStatus] = useState("")
   const navigate = useNavigate()
   const username = sessionStorage.getItem("username");
-  const localStorageToken = sessionStorage.getItem("access_token");
-  const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+  const access_token = sessionStorage.getItem("access_token");
+  const header = { headers: { "Authorization": `Bearer ${access_token}` } };
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isSwalOpen, setIsSwalOpen] = useState(false);
+  const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
 
   const getTooltipText = (status) => {
     if (status === ACTIVE) {
@@ -39,37 +36,9 @@ export default function Admin() {
     <Tooltip>{getTooltipText(status)}</Tooltip>
   );
 
-  const { getRemainingTime, reset } = useIdleTimer({
+  const { reset } = useIdleTimer({
     timeout: 1000 * 60 * 10,
-    onIdle: () => {
-      console.log('User is idle');
-      handleLogout();
-    },
   });
-
-  const handleOnIdle = () => {
-    const remainingTime = getRemainingTime();
-    if (!isSwalOpen && remainingTime < 1000 * 60 * 1 && isLoggedIn) {
-      MySwal.fire({
-        title: 'You have been idle for a while!',
-        text: `You will be logged out in ${remainingTime / 1000} seconds`,
-        showCancelButton: true,
-        confirmButtonText: 'Stay logged in',
-        cancelButtonText: 'Log out',
-        cancelButtonColor: '#dc3545',
-        reverseButtons: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          console.log('User wants to stay');
-          setIsSwalOpen(false);
-          reset();
-        } else {
-          handleLogout();
-        }
-      });
-      setIsSwalOpen(true);
-    }
-  };
 
   const handleLogout = () => {
     trackEvent({
@@ -86,16 +55,6 @@ export default function Admin() {
     localStorage.clear();
     navigate('/login')
   };
-
-  useEffect(() => {
-    let intervalId;
-    if (isLoggedIn) {
-      intervalId = setInterval(() => {
-        handleOnIdle();
-      }, 1000);
-    }
-    return () => clearInterval(intervalId);
-  }, [isLoggedIn]);
 
   const getUserList = () => {
     AdminAppService.getUserList(header)
@@ -291,6 +250,7 @@ export default function Admin() {
 
   return (
     <div className=''>
+      <IdleTimeout/>
       <AdminNavbar username={username} onLogout={handleLogout} />
       <div className='mt-4 px-5'>
         <table className="table table-striped">

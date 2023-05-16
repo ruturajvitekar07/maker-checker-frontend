@@ -1,12 +1,14 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2';
-import AdminAppService from '../Service/AdminAppService'
+import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import AdminNavbar from '../Navbars/AdminNavbar';
+import { useIdleTimer } from 'react-idle-timer';
+import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 import { useTracking } from 'react-tracking';
-
+import Swal from 'sweetalert2';
+import useAuth from '../LogIn/auth';
+import AdminNavbar from '../Navbars/AdminNavbar';
+import AdminAppService from '../Service/AdminAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function Signup() {
 
@@ -20,14 +22,35 @@ export default function Signup() {
     const [mobileNumber, setMobileNumber] = useState('')
     const navigate = useNavigate()
     const username = sessionStorage.getItem("username");
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
 
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const access_token = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${access_token}` } };
 
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+    };
+
+    const { reset } = useIdleTimer({
+        timeout: 1000 * 60 * 10,
+    });
+
+    const handleLogout = () => {
+        trackEvent({
+            component: "Admin",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset();
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
     };
 
     const createUser = (event) => {
@@ -125,8 +148,9 @@ export default function Signup() {
     }
 
     return (
-        <div className="">
-            <AdminNavbar username={username} />
+        <div style={{ overflow: 'hidden' }}>
+            <IdleTimeout/>
+            <AdminNavbar username={username} onLogout={handleLogout} />
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">

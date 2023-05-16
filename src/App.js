@@ -18,6 +18,7 @@ import NewFooter from './Navbars/NewFooter';
 import Workflows from './Admin/Workflows';
 import track from 'react-tracking';
 import UserActivity from './Admin/UserActivity';
+import UserAppService from '../src/Service/UserAppService';
 
 function App() {
 
@@ -46,6 +47,9 @@ function App() {
   );
 }
 
+const localStorageToken = sessionStorage.getItem("access_token");
+const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+
 const TrackedApp = track({
   // Your tracking data object goes here
   app: 'Macker-Checker',
@@ -53,13 +57,26 @@ const TrackedApp = track({
   App
 );
 
+
 const TrackedAndDispatchedApp = track(
   { app: 'Macker-Checker' },
   {
     // Your dispatch function goes here
     dispatch: (data) => {
       console.log(data);
-    },
+      console.log(header);
+      if(data){
+        UserAppService.setUsersActivities(data, header)
+        .then((response) => {
+          console.log('Data sent to server');
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log('Data not sent to server');
+          console.log(error);
+        })
+      }  
+    }
   }
 )(App);
 

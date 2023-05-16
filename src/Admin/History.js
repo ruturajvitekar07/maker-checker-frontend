@@ -1,18 +1,43 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import AdminAppService from '../Service/AdminAppService'
-import Swal from 'sweetalert2';
-import AdminNavbar from '../Navbars/AdminNavbar';
+import React, { useEffect, useState } from 'react';
+import { useIdleTimer } from 'react-idle-timer';
+import { useNavigate } from 'react-router-dom';
 import { useTracking } from 'react-tracking';
+import Swal from 'sweetalert2';
+import useAuth from '../LogIn/auth';
+import AdminNavbar from '../Navbars/AdminNavbar';
+import AdminAppService from '../Service/AdminAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function History() {
 
   const { trackEvent } = useTracking();
   const [history, setHistory] = useState([])
+  const navigate = useNavigate();
   const username = sessionStorage.getItem("username");
-  const localStorageToken = sessionStorage.getItem("access_token");
-  const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+  const access_token = sessionStorage.getItem("access_token");
+  const header = { headers: { "Authorization": `Bearer ${access_token}` } };
 
+  const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
+
+  const { reset } = useIdleTimer({
+    timeout: 1000 * 60 * 10,
+  });
+
+  const handleLogout = () => {
+    trackEvent({
+      component: "Admin",
+      event: "Clicked on logout button",
+      user: username,
+      time: new Date().toLocaleString(),
+      status: "Success"
+    });
+    setIsLoggedIn(false);
+    console.log('User has been logged out');
+    reset();
+    sessionStorage.clear();
+    localStorage.clear();
+    navigate('/login')
+  };
 
   const getHistory = () => {
     AdminAppService.getAllHistory(header)
@@ -52,7 +77,8 @@ export default function History() {
 
   return (
     <div className="">
-      <AdminNavbar username={username} />
+      <IdleTimeout/>
+      <AdminNavbar username={username} onLogout={handleLogout} />
       <div className='mt-3'>
         <h2 style={{ textAlign: 'center' }}>History</h2>
       </div>

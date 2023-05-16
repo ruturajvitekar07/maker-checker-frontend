@@ -87,5 +87,10 @@ class AdminAppService {
         // http://localhost:8080/admin/get-failed-login-info/abd@gmail.com
         return axios.get(BASE_REST_API_URL + '/admin/get-failed-login-info/' + username, header)
     }
+
+    getTrackingData(username, header){
+        // http://localhost:8080/admin/get-tracking-data
+        return axios.post(BASE_REST_API_URL + '/admin/get-tracking-data', username, header)
+    }
 }
 export default new AdminAppService();

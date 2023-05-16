@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import AppService from "../Service/AppService";
-import UserAppService from "../Service/UserAppService";
-import styles from "../LogIn/myStyle.module.css";
-import Navbars from "../Navbars/Navbars";
+import { useTracking } from "react-tracking";
 import Swal from "sweetalert2";
 import { D9862 } from "../Constants/constants";
-import { useTracking } from "react-tracking";
-
-// import { useIdleTimer } from 'react-idle-timer';
-// import withReactContent from 'sweetalert2-react-content';
-
-// const MySwal = withReactContent(Swal);
+import styles from "../LogIn/myStyle.module.css";
+import Navbars from "../Navbars/Navbars";
+import AppService from "../Service/AppService";
+import UserAppService from "../Service/UserAppService";
+import useAuth from './auth';
 
 const NewLogin = () => {
     const navigate = useNavigate();
@@ -21,66 +17,10 @@ const NewLogin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
     const [failedAttempts, setFailedAttempts] = useState(0);
-    // const [timeoutId, setTimeoutId] = useState(null);
-    // const [isSwalOpen, setIsSwalOpen] = useState(false);
-    // const [remainingTime, setRemainingTime] = useState(0);
 
     //==================Login====================
-
-    // const handleOnIdle = () => {
-    //     if (!isSwalOpen && isLoggedIn) {
-    //         MySwal.fire({
-    //             title: 'You have been idle for a while!',
-    //             text: 'You will be logged out soon',
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Stay logged in',
-    //             cancelButtonText: 'Log out',
-    //             cancelButtonColor: '#dc3545',
-    //             reverseButtons: true,
-    //         }).then((result) => {
-    //             clearTimeout(timeoutId);
-    //             if (result.isConfirmed) {
-    //                 console.log('User wants to stay');
-    //                 setIsSwalOpen(false);
-    //             } else {
-    //                 handleLogout();
-    //             }
-    //         });
-    //         setIsSwalOpen(true);
-    //     }
-    // };
-
-    // const handleLogout = () => {
-    //     setIsLoggedIn(false);
-    //     clearTimeout(timeoutId);
-    //     console.log('User has been logged out');
-    //     setTimeoutId(null);
-    //     setIsSwalOpen(false);
-    //     MySwal.close();
-    // };
-
-    // const { getRemainingTime, reset } = useIdleTimer({
-    //     timeout: 1000 * 6,
-    //     onIdle: handleOnIdle,
-    // });
-
-    // useEffect(() => {
-    //     setRemainingTime(getRemainingTime());
-    //     const intervalId = setInterval(() => {
-    //         setRemainingTime(getRemainingTime());
-    //     }, 1000);
-    //     return () => clearInterval(intervalId);
-    // }, [getRemainingTime]);
-
-    // const handleMouseMove = () => {
-    //     if (isLoggedIn) {
-    //         if (getRemainingTime() < 1000 * 6) {
-    //             reset({ timeout: 1000 * 6 });
-    //         }
-    //     }
-    // };
 
     const onLogin = (e) => {
         e.preventDefault();
@@ -89,7 +29,7 @@ const NewLogin = () => {
             trackEvent({
                 component: "Login",
                 event: "Clicked on user login button without username",
-                user: username,
+                user: username ? username : 'Unknown',
                 time: new Date().toLocaleString(),
                 status: "Failed"
             });
@@ -106,7 +46,7 @@ const NewLogin = () => {
             trackEvent({
                 component: "Login",
                 event: "Clicked on user login button without password",
-                user: username,
+                user: username ? username : 'Unknown',
                 time: new Date().toLocaleString(),
                 status: "Failed"
             });
@@ -123,6 +63,52 @@ const NewLogin = () => {
             AppService.signin(userCredentials)
                 .then((response) => {
                     if (response.status === 200) {
+                        const access_token = response.data.access_token;
+                        const username = response.data.username;
+                        const expires_in = response.data.expires_in;
+                        const refresh_token = response.data.refresh_token;
+                        sessionStorage.setItem("access_token", access_token);
+                        sessionStorage.setItem("username", username);
+                        sessionStorage.setItem("expires_in", expires_in);
+                        sessionStorage.setItem("refresh_token", refresh_token);
+                        sessionStorage["access_token"] = access_token;
+                        sessionStorage["username"] = username;
+                        sessionStorage["expires_in"] = expires_in;
+                        sessionStorage["refresh_token"] = refresh_token;
+                        // const interceptor = axios.interceptors.response.use(
+                        //     (response) => {
+                        //         return response;
+                        //     },
+                        //     (error) => {
+                        //         if (error.response && error.response.status === 401) {
+                        //             // Remove the interceptor to prevent a loop
+                        //             axios.interceptors.response.eject(interceptor);
+                        //             // Attempt to refresh the access token
+                        //             const refresh_token = sessionStorage.getItem("refresh_token");
+                        //             return AppService.refreshToken(refresh_token).then((response) => {
+                        //                 if (response.status === 200) {
+                        //                     const access_token = response.data.access_token;
+                        //                     sessionStorage.setItem("access_token", access_token);
+                        //                     sessionStorage["access_token"] = access_token;
+                        //                     // Retry the original request with the new access token
+                        //                     error.config.headers.Authorization = `Bearer ${access_token}`;
+                        //                     return axios(error.config);
+                        //                 } else {
+                        //                     // Refresh token failed, redirect to login page
+                        //                     sessionStorage.clear();
+                        //                     window.location.replace("/login");
+                        //                 }
+                        //             }).catch(() => {
+                        //                 // Refresh token failed, redirect to login page
+                        //                 sessionStorage.clear();
+                        //                 window.location.replace("/login");
+                        //             });
+                        //         } else {
+                        //             return Promise.reject(error);
+                        //         }
+                        //     }
+                        // );
+
                         Swal.fire({
                             icon: "success",
                             title: "Welcome back to Application!",
@@ -131,27 +117,22 @@ const NewLogin = () => {
                             position: "top-end",
                             timer: 1500,
                         });
-                        const access_token = response.data.access_token;
-                        const username = response.data.username;
-                        const expires_in = response.data.expires_in;
-                        sessionStorage.setItem("access_token", access_token);
-                        sessionStorage.setItem("username", username);
-                        sessionStorage.setItem("expires_in", expires_in);
-                        sessionStorage["access_token"] = access_token;
-                        sessionStorage["username"] = username;
-                        sessionStorage["expires_in"] = expires_in;
+
                         trackEvent({
                             component: "Login",
                             event: "After clicked on user login button",
-                            user: username,
+                            user: username ? username : 'Unknown',
                             time: new Date().toLocaleString(),
                             status: "Login Successfull"
                         });
-                        if (username === "ADMIN") navigate("/admin");
+                        if (username === "ADMIN"){
+                            setIsLoggedIn(true)
+                            navigate("/admin");
+                        } 
                         else if (username !== null) {
-                            const localStorageToken = sessionStorage.getItem("access_token");
+                            const access_token = sessionStorage.getItem("access_token");
                             const header = {
-                                headers: { Authorization: `Bearer ${localStorageToken}` },
+                                headers: { Authorization: `Bearer ${access_token}` },
                             };
                             UserAppService.getUserInfo(header).then((response) => {
                                 if (response.status === 200) {
@@ -209,52 +190,53 @@ const NewLogin = () => {
                         status: "Login Failed"
                     });
                     console.log(error);
+                    console.log(error.response.data.message);
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: "Invalid Username or Password",
+                        text: error.response.data.message,
                         toast: true,
                         position: "top-end",
                         footer: "Please try again later",
-                        timer: 1500,
+                        timer: 2500,
                     });
                 });
         }
     };
 
-    useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            const isLoggedIn = false;
+    // useEffect(() => {
+    //     const handleBeforeUnload = (event) => {
+    //         const isLoggedIn = false;
 
-            if (!isLoggedIn) {
-                event.preventDefault();
-                event.returnValue = "";
+    //         if (!isLoggedIn) {
+    //             event.preventDefault();
+    //             event.returnValue = "";
 
-                Swal({
-                    title: "Please login first",
-                    icon: "warning",
-                    buttons: {
-                        cancel: "Cancel",
-                        confirm: {
-                            text: "Stay on Page",
-                            value: "stay",
-                        },
-                    },
-                }).then((value) => {
-                    if (value === "stay") {
-                    } else {
-                        window.location.href = "/login";
-                    }
-                });
-            }
-        };
+    //             Swal.fire({
+    //                 title: "Please login first",
+    //                 icon: "warning",
+    //                 buttons: {
+    //                     cancel: "Cancel",
+    //                     confirm: {
+    //                         text: "Stay on Page",
+    //                         value: "stay",
+    //                     },
+    //                 },
+    //             }).then((value) => {
+    //                 if (value === "stay") {
+    //                 } else {
+    //                     window.location.href = "/login";
+    //                 }
+    //             });
+    //         }
+    //     };
 
-        window.addEventListener("beforeunload", handleBeforeUnload);
+    //     window.addEventListener("beforeunload", handleBeforeUnload);
 
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-        };
-    }, []);
+    //     return () => {
+    //         window.removeEventListener("beforeunload", handleBeforeUnload);
+    //     };
+    // }, []);
 
     return (
         <>

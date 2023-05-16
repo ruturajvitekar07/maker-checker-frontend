@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTracking } from 'react-tracking';
 
 
 export default function AdminNavbar(props) {
 
     const { trackEvent } = useTracking();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark mt-0" style={{ backgroundColor: 'hsl(218, 41%, 30%)' }}>
@@ -68,28 +68,28 @@ export default function AdminNavbar(props) {
                         </a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/adduser" 
-                        onClick={() =>
-                            trackEvent({
-                                component: 'Add User',
-                                event: 'Add User-Clicked',
-                                user: props.username,
-                                time: new Date().toLocaleString(),
-                                status: 'Success'
-                            })}>
+                        <a className="nav-link" href="/adduser"
+                            onClick={() =>
+                                trackEvent({
+                                    component: 'Add User',
+                                    event: 'Add User-Clicked',
+                                    user: props.username,
+                                    time: new Date().toLocaleString(),
+                                    status: 'Success'
+                                })}>
                             Add User
                         </a>
                     </li>
                     <li className="nav-item px-2">
-                        <a className="nav-link" href="/history" 
-                        onClick={() =>
-                            trackEvent({
-                                component: 'History',
-                                event: 'History-Clicked',
-                                user: props.username,
-                                time: new Date().toLocaleString(),
-                                status: 'Success'
-                            })}>
+                        <a className="nav-link" href="/history"
+                            onClick={() =>
+                                trackEvent({
+                                    component: 'History',
+                                    event: 'History-Clicked',
+                                    user: props.username,
+                                    time: new Date().toLocaleString(),
+                                    status: 'Success'
+                                })}>
                             History
                         </a>
                     </li>

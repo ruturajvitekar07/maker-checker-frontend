@@ -7,12 +7,6 @@ export default function UserNavbar(props) {
     // const navigate = useNavigate()
     const { trackEvent } = useTracking();
 
-    // const onLogout = () => {
-    //     sessionStorage.clear();
-    //     localStorage.clear();
-    //     navigate('/login')
-    // }
-
     return (
         <nav className="navbar navbar-expand-lg navbar-dark me-auto ml-lg-2" style={{ backgroundColor: 'hsl(218, 41%, 30%)' }}>
             <div className="container-fluid">

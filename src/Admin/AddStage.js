@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react'
-import { Link } from "react-router-dom";
-import { toast } from 'react-toastify'
-import AdminAppService from '../Service/AdminAppService'
-import Swal from 'sweetalert2';
-import { TRUE, FALSE } from '../Constants/constants';
-import { useParams } from "react-router-dom";
-import AdminNavbar from '../Navbars/AdminNavbar';
+import { useEffect, useState } from 'react';
+import { useIdleTimer } from 'react-idle-timer';
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from 'react-toastify';
 import { useTracking } from 'react-tracking';
-
+import Swal from 'sweetalert2';
+import { FALSE, TRUE } from '../Constants/constants';
+import useAuth from '../LogIn/auth';
+import AdminNavbar from '../Navbars/AdminNavbar';
+import AdminAppService from '../Service/AdminAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function AddStage() {
 
     const { trackEvent } = useTracking();
-    
+
     const [no, setNo] = useState('')
     const [role, setRole] = useState('')
     const [nextStage, setNextStage] = useState('')
@@ -23,18 +24,12 @@ export default function AddStage() {
     const [emailChecked, setEmailChecked] = useState(true);
     const [smsChecked, setSmsChecked] = useState(false);
     const [both, setBoth] = useState(false);
+    const navigate = useNavigate()
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth(); 
     const username = sessionStorage.getItem("username");
-
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const access_token = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${access_token}` } };
     const { work } = useParams();
-
-    // const [nextNo, setNextNo] = useState("1");
-    // const handleNoChange = (e) => {
-    //     const currentNo = e.target.value;
-    //     setNo(currentNo);
-    //     setNextNo(Number(currentNo) + 1);
-    // };
 
     const handleEmailChange = () => {
         setEmailChecked(true);
@@ -62,6 +57,27 @@ export default function AddStage() {
         setEmail(TRUE)
         setMobileNo(TRUE)
     }
+
+
+    const { reset } = useIdleTimer({
+        timeout: 1000 * 60 * 10,
+    });
+
+    const handleLogout = () => {
+        trackEvent({
+            component: "Admin",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset();
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    };
 
     const workflowList = () => {
         AdminAppService.getWorkflowList(header)
@@ -174,7 +190,8 @@ export default function AddStage() {
 
     return (
         <div>
-            <AdminNavbar username={username} />
+            <IdleTimeout/>
+            <AdminNavbar username={username} onLogout={handleLogout} />
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body mb-3">

@@ -1,8 +1,12 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import UserAppService from '../Service/UserAppService'
+import React, { useEffect, useState } from 'react';
+import { useIdleTimer } from 'react-idle-timer';
+import { useNavigate } from 'react-router-dom';
+import { useTracking } from 'react-tracking';
 import Swal from 'sweetalert2';
+import useAuth from '../LogIn/auth';
 import UserNavbar from '../Navbars/UserNavbar';
+import UserAppService from '../Service/UserAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function UserInfo() {
 
@@ -11,8 +15,31 @@ export default function UserInfo() {
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
     const username = sessionStorage.getItem("username");
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const access_token = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${access_token}` } };
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
+    const { trackEvent } = useTracking();
+    const navigate = useNavigate();
+
+    const { reset } = useIdleTimer({
+        timeout: 1000 * 60 * 5
+    });
+
+    const handleLogout = () => {
+        trackEvent({
+            component: "Admin",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset();
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    };
 
     useEffect(() => {
         UserAppService.getUserInfo(header)
@@ -47,11 +74,10 @@ export default function UserInfo() {
 
     }, [])
 
-
-
     return (
         <div>
-            <UserNavbar username={username}/>
+            <IdleTimeout/>
+            <UserNavbar username={username} onLogout={handleLogout} />
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3 mt-4">
                     <div className="card-body">

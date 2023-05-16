@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useIdleTimer } from "react-idle-timer";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import AdminAppService from "../Service/AdminAppService";
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import AdminNavbar from "../Navbars/AdminNavbar";
 import { useTracking } from 'react-tracking';
-
+import Swal from "sweetalert2";
+import useAuth from '../LogIn/auth';
+import AdminNavbar from "../Navbars/AdminNavbar";
+import AdminAppService from "../Service/AdminAppService";
+import IdleTimeout from "../Utility/IdleTimeout";
 
 export default function ViewStage() {
 
@@ -15,9 +16,31 @@ export default function ViewStage() {
   const [workFlows, setWorkFlows] = useState([]);
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
   const [workflows1, setWorkflows1] = useState([]);
+  const navigate = useNavigate();
+  const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
   const username = sessionStorage.getItem("username");
-  const localStorageToken = sessionStorage.getItem("access_token");
-  const header = { headers: { Authorization: `Bearer ${localStorageToken}` } };
+  const access_token = sessionStorage.getItem("access_token");
+  const header = { headers: { Authorization: `Bearer ${access_token}` } };
+
+  const { reset } = useIdleTimer({
+    timeout: 1000 * 60 * 10,
+  });
+
+  const handleLogout = () => {
+    trackEvent({
+      component: "Admin",
+      event: "Clicked on logout button",
+      user: username,
+      time: new Date().toLocaleString(),
+      status: "Success"
+    });
+    setIsLoggedIn(false);
+    console.log('User has been logged out');
+    reset();
+    sessionStorage.clear();
+    localStorage.clear();
+    navigate('/login')
+  };
 
   const getStages = () => {
     AdminAppService.getAllWorkflowsData(header)
@@ -102,7 +125,8 @@ export default function ViewStage() {
 
   return (
     <div>
-      <AdminNavbar username={username} />
+      <IdleTimeout/>
+      <AdminNavbar username={username} onLogout={handleLogout} />
       <div className="col-10 offset-1">
         <div className="mt-4">
           <h2 className="mt-3" style={{ textAlign: "center" }}>

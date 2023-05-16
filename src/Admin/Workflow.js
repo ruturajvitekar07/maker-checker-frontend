@@ -1,13 +1,14 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import AdminAppService from '../Service/AdminAppService'
-import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2';
-import { toast } from 'react-toastify'
+import React, { useEffect, useState } from 'react';
+import { useIdleTimer } from 'react-idle-timer';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AdminNavbar from '../Navbars/AdminNavbar';
 import { useTracking } from 'react-tracking';
-
+import Swal from 'sweetalert2';
+import useAuth from '../LogIn/auth';
+import AdminNavbar from '../Navbars/AdminNavbar';
+import AdminAppService from '../Service/AdminAppService';
+import IdleTimeout from '../Utility/IdleTimeout';
 
 export default function Workflow() {
 
@@ -16,9 +17,31 @@ export default function Workflow() {
     const [version, setVersion] = useState('')
     const [workflows, setWorkflows] = useState([])
     const [showTable, setShowTable] = useState(false);
+    const { isSwalOpen, setIsSwalOpen, isLoggedIn, setIsLoggedIn } = useAuth();
+    const navigate = useNavigate();
     const username = sessionStorage.getItem("username");
-    const localStorageToken = sessionStorage.getItem("access_token");
-    const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
+    const access_token = sessionStorage.getItem("access_token");
+    const header = { headers: { "Authorization": `Bearer ${access_token}` } };
+
+    const { reset } = useIdleTimer({
+        timeout: 1000 * 60 * 10,
+    });
+
+    const handleLogout = () => {
+        trackEvent({
+            component: "Admin",
+            event: "Clicked on logout button",
+            user: username,
+            time: new Date().toLocaleString(),
+            status: "Success"
+        });
+        setIsLoggedIn(false);
+        console.log('User has been logged out');
+        reset();
+        sessionStorage.clear();
+        localStorage.clear();
+        navigate('/login')
+    };
 
     const workflowList = () => {
         AdminAppService.getWorkflowList(header)
@@ -170,7 +193,8 @@ export default function Workflow() {
 
     return (
         <div>
-            <AdminNavbar username={username} />
+            <IdleTimeout/>
+            <AdminNavbar username={username} onLogout={handleLogout} />
             <div className="container mt-5">
                 <div class="row">
                     <div class="col">

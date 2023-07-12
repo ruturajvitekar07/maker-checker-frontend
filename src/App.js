@@ -1,6 +1,6 @@
 import './App.css';
 import Home from './Home/Home';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react'
@@ -24,23 +24,23 @@ function App() {
 
   return (
     <React.Fragment>
-      <BrowserRouter>
+      <Router basename='/maker-checker'>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/adduser" element={<Signup />} />
-          <Route path="/addstage/:work" element={<AddStage />} />
-          <Route path="/stagelist" element={<ViewStage />} />
-          <Route path="/user" element={<User />} />
-          <Route path='/approver' element={<Approver />} />
-          <Route path='/profile' element={<UserInfo />} />
-          <Route path='/history' element={<History />} />
-          <Route path='/workflow' element={<Workflow />} />
-          <Route path='/login' element={<NewLogin />} />
-          <Route path='/workflows' element={<Workflows />} />
-          <Route path="/activity/:user" element={<UserActivity />} />
+          <Route basename='/maker-checker' exact path="/" element={<Home />} />
+          <Route basename='/maker-checker' path="/admin" element={<Admin />} />
+          <Route basename='/maker-checker' path="/adduser" element={<Signup />} />
+          <Route basename='/maker-checker' path="/addstage/:work" element={<AddStage />} />
+          <Route basename='/maker-checker' path="/stagelist" element={<ViewStage />} />
+          <Route basename='/maker-checker' path="/user" element={<User />} />
+          <Route basename='/maker-checker' path='/approver' element={<Approver />} />
+          <Route basename='/maker-checker' path='/profile' element={<UserInfo />} />
+          <Route basename='/maker-checker' path='/history' element={<History />} />
+          <Route basename='/maker-checker' path='/workflow' element={<Workflow />} />
+          <Route basename='/maker-checker' path='/login' element={<NewLogin />} />
+          <Route basename='/maker-checker' path='/workflows' element={<Workflows />} />
+          <Route basename='/maker-checker' path="/activity/:user" element={<UserActivity />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
       <ToastContainer />
       <NewFooter></NewFooter>
     </React.Fragment>
@@ -50,12 +50,12 @@ function App() {
 const localStorageToken = sessionStorage.getItem("access_token");
 const header = { headers: { "Authorization": `Bearer ${localStorageToken}` } };
 
-const TrackedApp = track({
-  // Your tracking data object goes here
-  app: 'Macker-Checker',
-})(
-  App
-);
+// const TrackedApp = track({
+//   // Your tracking data object goes here
+//   app: 'Macker-Checker',
+// })(
+//   App
+// );
 
 
 const TrackedAndDispatchedApp = track(

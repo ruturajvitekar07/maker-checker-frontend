@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 import { useTracking } from "react-tracking";
 import Swal from "sweetalert2";
 import { D9862 } from "../Constants/constants";
@@ -75,40 +75,6 @@ const NewLogin = () => {
                         sessionStorage["username"] = username;
                         sessionStorage["expires_in"] = expires_in;
                         sessionStorage["refresh_token"] = refresh_token;
-                        // const interceptor = axios.interceptors.response.use(
-                        //     (response) => {
-                        //         return response;
-                        //     },
-                        //     (error) => {
-                        //         if (error.response && error.response.status === 401) {
-                        //             // Remove the interceptor to prevent a loop
-                        //             axios.interceptors.response.eject(interceptor);
-                        //             // Attempt to refresh the access token
-                        //             const refresh_token = sessionStorage.getItem("refresh_token");
-                        //             return AppService.refreshToken(refresh_token).then((response) => {
-                        //                 if (response.status === 200) {
-                        //                     const access_token = response.data.access_token;
-                        //                     sessionStorage.setItem("access_token", access_token);
-                        //                     sessionStorage["access_token"] = access_token;
-                        //                     // Retry the original request with the new access token
-                        //                     error.config.headers.Authorization = `Bearer ${access_token}`;
-                        //                     return axios(error.config);
-                        //                 } else {
-                        //                     // Refresh token failed, redirect to login page
-                        //                     sessionStorage.clear();
-                        //                     window.location.replace("/login");
-                        //                 }
-                        //             }).catch(() => {
-                        //                 // Refresh token failed, redirect to login page
-                        //                 sessionStorage.clear();
-                        //                 window.location.replace("/login");
-                        //             });
-                        //         } else {
-                        //             return Promise.reject(error);
-                        //         }
-                        //     }
-                        // );
-
                         Swal.fire({
                             icon: "success",
                             title: "Welcome back to Application!",
@@ -314,6 +280,7 @@ const NewLogin = () => {
                                                             required
                                                             value={username}
                                                             className="form-control"
+                                                            data-testid="username"
                                                             onChange={(e) => {
                                                                 setUsername(e.target.value);
                                                             }}
@@ -333,6 +300,7 @@ const NewLogin = () => {
                                                             value={password}
                                                             required
                                                             className="form-control"
+                                                            data-testid="password"
                                                             onChange={(e) => {
                                                                 setPassword(e.target.value);
                                                             }}
